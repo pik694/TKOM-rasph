@@ -1,0 +1,5 @@
+import <System>
+
+class ESP8266 : Device {
+    public func someFunc (anInt : int) -> int dynlib "someDynlib.so"
+}

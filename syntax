@@ -1,0 +1,94 @@
+
+## Common
+upper_character      = "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" 
+                            | "I" | "J" | "K" | "L" | "M" | "N" | "O" 
+                            | "P" | "Q" | "R" | "S" | "T" | "U" | "V" 
+                            | "W" | "X" | "Y" | "Z" ;
+
+lower_character      = "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" 
+                            | "i" | "j" | "k" | "l" | "m" | "n" | "o" 
+                            | "p" | "q" | "r" | "s" | "t" | "u" | "v"
+                            | "w" | "x" | "y" | "z" ;
+
+digit                   = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9";
+
+character               = upper_character | lower_character
+nnumber                 = digit, {digit};
+number                  = ["-"], number;
+free_text               = { ? all visible characters ? };
+
+comment                 = "//", free_text, newline;
+ident                   = character, {character | digit};
+class_ident             = upper_character, [ident]
+
+simple_type             = "int" | "bool" | "string"; 
+type_ident              = class_ident | simple_type;
+
+time_const              = number, ( "w" | "d" | "h" | "min" | "sec" | "ms");
+constant                = number | character | time_const | 
+
+## File structure
+
+file_structure          = [imports,] (main_program | class_definition | configuration)
+
+imports                 = {import, newline}
+import                  = "import", (""", module_name, """ |  "<", module_name, ">" );
+
+## Main program
+
+main_program            = globals, [init_method,] main_method [, deinit_method];
+globals                 = {global, newline};
+global                  = var_decl | const_decl;
+
+init_method             = "INIT", body;
+main_method             = "MAIN", body;
+deinit_method           = "DEINIT", body;
+
+## Variables and constants
+
+var_decl                = "var", ident, ":", type_ident [, "=", expression];
+const_decl              = "let", ident, ":", type_ident, "=", expression;
+
+## Body
+
+body                    = "{", newline,  {statement newline,} "}";
+statement               = if_statement |  loop_statement | every_statement |  expression; //TODO
+
+## Flow control
+
+if_statement            = ("if", expr, body | "if", expr, body, {"else if", expr, body}) [, "else", body];
+
+loop_statement          = range_expr | foreach_loop;
+range_loop              = "for", range_expr, body;
+foreach_loop            = "for", ident, "in", ident, body;
+
+every_statement         = "every", time_const, "do", body;
+
+expression              = ident | constant | function_call
+                                | assignment_exprression | comparison_expression | arithmetic_expression | bit_expression | ("!", expression);
+assignment_exprression  = ident, "=", expression;
+comparison_expression   = expression, comparison_operator, expression;
+arithmetic_expression   = expression, arithmetic_operator, expression;
+bit_expression          = (expression, bit_operator, expression) |  (single_operand_bit_operator, expression);
+
+comparison_operator     = "==" | "!=" | "<" | "<=" | ">" | ">=";
+arithmetic_operator     = "+" | "-" | "*" | "/";
+bit_operator            = "shift_left" | "shift_right" | "and" | "or";
+single_operand_bit_operator = "!" | "neg";
+
+function_call           = ident, ".", ident, "(", function_call_arg_list, ")";
+function_call_arg_list  = [ident, ":",] ident | expr,  {",", function_call_arg_list, } ;
+
+## Class definition
+
+class_definition        = "class", class_ident, [":", class_ident,] "{", newline, members, "}";
+
+members                 = {member, newline} 
+member                  = attribute | function;
+
+attribute               = access_specifier, (var_decl | const_decl );
+function                = access_specifier, "func", ident, "(", [argument_list,] ")", ["->", type_ident, ](body | dynlib_call);
+
+dynlib_call             = "dynlib", """, free_text, """;
+
+argument_list           = ident, ":" type_ident, {",", argument_list}; 

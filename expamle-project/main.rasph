@@ -1,0 +1,60 @@
+
+// This is a comment
+
+import <System>
+import <LogSystem>
+import <Interfaces>
+import <GPIO>
+
+import "devices/ESP8266"
+
+let LED_PIN : GPIO.PIN = GPIO.PINS.GPIO20 
+
+INIT {
+    System.setRunMode("deamon")
+    try{
+        Interfaces.init("1wire", "exclusive")
+        let QUEUE : System.FIFO = System.createFIFOQueue()
+        GPIO.reservePin(LED_PIN)
+        GPIO.setPin(LED_PIN, on)
+    }
+    catch(Exception e){
+        LogSystem.logException(e)
+        System.exit(-1);
+    }
+}
+
+MAIN {
+
+    let remoteController = (System.IP("192.168.1.2"))
+
+    if remoteController.checkConnection() {
+        remoteController.sendCommand(Command(code : 1, text : ))
+    }
+    
+    every 1 sec do {
+        GPIO.togglePin(LED_PIN)
+    }
+
+    every 5 min do {
+        //Check temperature
+    }
+    every 5 min do {
+        // Two events every 5 minutes
+    }
+    every 1 h 30 min do {
+        if true {
+            System.stdout.println("Hello World!");
+        }
+    }
+    every 1 d do {
+        // Diagnose system
+    }
+}
+
+DEINIT { 
+    Interfaces.deinit("1wire")
+    GPIO.releasePin(LED_PIN)
+    QUEUE.close();
+}
+
