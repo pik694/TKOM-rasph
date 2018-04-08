@@ -21,7 +21,7 @@ comment                 = "//", free_text, newline;
 ident                   = character, {character | digit};
 class_ident             = upper_character, [ident]
 
-simple_type             = "int" | "bool" | "string"; 
+simple_type             = "int" | "bool" | "string" | "double"; 
 type_ident              = class_ident | simple_type;
 
 time_const              = number, ( "w" | "d" | "h" | "min" | "sec" | "ms");
@@ -73,7 +73,7 @@ bit_expression          = (expression, bit_operator, expression) |  (single_oper
 
 comparison_operator     = "==" | "!=" | "<" | "<=" | ">" | ">=";
 arithmetic_operator     = "+" | "-" | "*" | "/";
-bit_operator            = "shift_left" | "shift_right" | "and" | "or";
+bit_operator            = "shift_left" | "shift_right" | "and" | "or" | "xor";
 single_operand_bit_operator = "!" | "neg";
 
 function_call           = ident, ".", ident, "(", function_call_arg_list, ")";
