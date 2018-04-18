@@ -13,16 +13,8 @@ BOOST_AUTO_TEST_SUITE(lexer_test_suite)
 
     BOOST_AUTO_TEST_CASE(sample_test_case) {
 
-        rasph::lexer::Lexer lexer;
         BOOST_CHECK_EQUAL(1,1);
         
-        BOOST_CHECK_EQUAL(lexer.a(),10);
-    }
-    BOOST_AUTO_TEST_CASE(sample_test_case1) {
-
-        rasph::lexer::Lexer lexer;
-
-        BOOST_CHECK_EQUAL(lexer.a(),10);
     }
 
 BOOST_AUTO_TEST_SUITE_END()
