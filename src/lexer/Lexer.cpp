@@ -16,4 +16,7 @@ Lexer::Lexer() {
     this->self += token::if_token | token::else_token;
 
     this->self += token::const_int_token;
+    this->self += token::const_double_token;
+
+    std::bind();
 }

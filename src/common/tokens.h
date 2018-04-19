@@ -25,18 +25,42 @@ namespace rasph::common::tokens {
             if_token("if"),
             else_token("else"),
             for_token("for"),
-            foreach_token("foreach");
+            foreach_token("foreach"),
+            in_token("in"),
+            main_token("MAIN"),
+            init_token("INIT"),
+            deinit_token("DEINIT");
+
+
+    //Time tokens
+    lex::token_def<>
+            day_token("d"),
+            week_token("w"),
+            hour_token("h"),
+            min_token("min"),
+            sec_token("sec"),
+            ms_token("ms");
+
 
     // Operators
     lex::token_def<>
-            plus_token('+'),
-            minus_token('-');
+            plus_token("+"),
+            minus_token("-"),
+            div_token("/"),
+            dot_token("."),
+            multiply_token("*");
 
-    // Others
 
-    lex::token_def<std::string> identifier_token ("[a-zA-Z_][a-zA-Z0-9_]*");
-    lex::token_def<double> const_double_token ("[1-9][0-9]*.[0-9]*[1-9]");
-    lex::token_def<int> const_int_token ("[1-9][0-9]*");
+    // Bool values
+    lex::token_def<bool>
+            true_token("true"),
+            on_token("on"),
+            false_token("false"),
+            off_token("off");
+
+    lex::token_def<std::string> identifier_token("[a-zA-Z_][a-zA-Z0-9_]*");
+    lex::token_def<double> const_double_token("[1-9][0-9]*.[0-9]*[1-9]");
+    lex::token_def<int> const_int_token("[1-9][0-9]*");
 }
 
 #endif //RASPH_TOKEN_H
