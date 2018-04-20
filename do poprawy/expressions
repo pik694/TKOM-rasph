@@ -1,0 +1,67 @@
+
+1. Comment
+// This is a comment
+
+
+2. A block
+{
+    statements
+}
+
+
+3. For loop
+for i in sth_iterable {
+    statements
+}
+
+4. if statement
+if condition {
+    statements
+}
+else if condition {
+
+}
+else {
+
+}
+
+5. every statement
+every period {
+
+}
+
+6. lambda
+(parameters) -> {
+    statements
+}
+
+
+7. class
+class ClassName {
+
+    variables
+
+    methods
+
+    events
+
+}
+
+8. Methods - only class members
+func funcName(parameters){
+}
+
+
+9. invoke event
+eventObject.invoke(parameters)
+
+10. event handler
+handle eventObject with method_or_lambda
+
+11. class member
+objectName.member
+
+
+
+
+

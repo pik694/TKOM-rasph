@@ -1,94 +1,77 @@
 
-## Common
-upper_character      = "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" 
-                            | "I" | "J" | "K" | "L" | "M" | "N" | "O" 
-                            | "P" | "Q" | "R" | "S" | "T" | "U" | "V" 
-                            | "W" | "X" | "Y" | "Z" ;
+comment = // free_text newline
 
-lower_character      = "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" 
-                            | "i" | "j" | "k" | "l" | "m" | "n" | "o" 
-                            | "p" | "q" | "r" | "s" | "t" | "u" | "v"
-                            | "w" | "x" | "y" | "z" ;
+program = {class_def | statements}
 
-digit                   = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9";
+class_def = "class" ident "{" members "}"
 
-character               = upper_character | lower_character
-nnumber                 = digit, {digit};
-number                  = ["-"], number;
-free_text               = { ? all visible characters ? };
+members = empty | {member}
+member = eventDec | method_decl | varDecl
 
-comment                 = "//", free_text, newline;
-ident                   = character, {character | digit};
-class_ident             = upper_character, [ident]
+method_decl = "func" ident "(" params ")" method_body
+mehtod_body = "{" statements ["return" assignable] "}"
+varDecl = "var" ident
+eventDec = event ident
 
-simple_type             = "int" | "bool" | "string" | "double"; 
-type_ident              = class_ident | simple_type;
+params = [assignable {"," assignable} ]
 
-time_const              = number, ( "w" | "d" | "h" | "min" | "sec" | "ms");
-constant                = number | character | time_const | 
+block = "{" statements "}"
 
-## File structure
+statements = {if_statement  | assign_statement | method_call
+                            | block | handle_statement | every_statement
+                            | for_statement | var_def_statement }
 
-file_structure          = [imports,] (main_program | class_definition | configuration)
 
-imports                 = {import, newline}
-import                  = "import", (""", module_name, """ |  "<", module_name, ">" );
 
-## Main program
+if_statement = "if" condition block ["else" block]
+for_statement = "for" ident "in" assignable block
+assign_statement = ident assign_operator assignable
+handle_statement = "handle" object_member "with" (object_member | lambda_def)
+every_statement = "every" period block
+var_def_statement = assign_statement
 
-main_program            = globals, [init_method,] main_method [, deinit_method];
-globals                 = {global, newline};
-global                  = var_decl | const_decl;
+lambda_def = "(" params ")" "->" block
 
-init_method             = "INIT", body;
-main_method             = "MAIN", body;
-deinit_method           = "DEINIT", body;
 
-## Variables and constants
+assignable = method_call | object_member | expression | variable
 
-var_decl                = "var", ident, ":", type_ident [, "=", expression];
-const_decl              = "let", ident, ":", type_ident, "=", expression;
+method_call = [object_member "."] ident "(" params ")"
+object_member = {(method_call | ident) "."}  ident
 
-## Body
 
-body                    = "{", newline,  {statement newline,} "}";
-statement               = if_statement |  loop_statement | every_statement |  expression; //TODO
+expression = multiplicative_expression { additive_operator multiplicative_expression }
+multiplicative_expression = primary_expr {multiplicative_operator primary_expression }
+primary_expression = (literal | variable | parentheses_expr | object_member)
+parentheses_expr = "(" expression ")"
 
-## Flow control
+condition = and_condition {or_operator and_condition}
+and_condition = equality_condition {and_operator equality_condition}
+equality_condition = relational_condition [equal_operator relational_condition]
+relational_condition = primary_condition [relation_operator primary_condition]
+primary_cond = [unary_operator] (parentheses_condition | assignable)
+parentheses_condition = "(" condition ")"
 
-if_statement            = ("if", expr, body | "if", expr, body, {"else if", expr, body}) [, "else", body];
+period = {period} natural_number time_specifier
+time_specifier = "m" | "w" | "d" | "h" | "min" | "sec" | "ms"
 
-loop_statement          = range_expr | foreach_loop;
-range_loop              = "for", range_expr, body;
-foreach_loop            = "for", ident, "in", ident, body;
+unary_operator = "!"
+assign_operator = "="
+or_operator = "or"
+and_operator = "and"
+equal_operator = "==" | "!="
+relation_operator = "<" | "<=" | "=>" | ">"
+additive_operator = "+" | "-"
+multiplicative_operator = "*" | "/"
 
-every_statement         = "every", time_const, "do", body;
+literal = number_literal | text_literal
+variable = ident | object_member
+ 
+number_literal = ["-"] (natural_number | double_number)
+natural_number = "1".."9" {digit}
+double_number = natural_number "." {digit} "1".."9"
 
-expression              = ident | constant | function_call
-                                | assignment_exprression | comparison_expression | arithmetic_expression | bit_expression | ("!", expression);
-assignment_exprression  = ident, "=", expression;
-comparison_expression   = expression, comparison_operator, expression;
-arithmetic_expression   = expression, arithmetic_operator, expression;
-bit_expression          = (expression, bit_operator, expression) |  (single_operand_bit_operator, expression);
 
-comparison_operator     = "==" | "!=" | "<" | "<=" | ">" | ">=";
-arithmetic_operator     = "+" | "-" | "*" | "/";
-bit_operator            = "shift_left" | "shift_right" | "and" | "or" | "xor";
-single_operand_bit_operator = "!" | "neg";
+ident =  letter {digit | letter}
+letter = "a".."z" | "A".."Z" | "_"
+digit = "0".."9"
 
-function_call           = ident, ".", ident, "(", function_call_arg_list, ")";
-function_call_arg_list  = [ident, ":",] ident | expr,  {",", function_call_arg_list, } ;
-
-## Class definition
-
-class_definition        = "class", class_ident, [":", class_ident,] "{", newline, members, "}";
-
-members                 = {member, newline} 
-member                  = attribute | function;
-
-attribute               = access_specifier, (var_decl | const_decl );
-function                = access_specifier, "func", ident, "(", [argument_list,] ")", ["->", type_ident, ](body | dynlib_call);
-
-dynlib_call             = "dynlib", """, free_text, """;
-
-argument_list           = ident, ":" type_ident, {",", argument_list}; 
