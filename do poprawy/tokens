@@ -1,1 +1,11 @@
+"for", "if", "else", "in"
+"class", "func", "var", "return", "->"
+"event", "handle", "with"
+"every", "m", "w", "d", "h", "min", "sec", "ms"
+"(", ")", "{", "}",
+"."
 
+"*", "/", "+", "-", "="
+"==", "!=", "<", "<=", "=>", ">", "or", "and", "!"
+
+identifier, number_literal, text_string, bool_const

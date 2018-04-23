@@ -1,9 +1,6 @@
-enable_testing()
 
-find_package(Boost 1.66.0 REQUIRED COMPONENTS unit_test_framework)
+find_package(Boost 1.60 REQUIRED COMPONENTS unit_test_framework)
+include_directories(${Boost_INCLUDE_DIRS})
 
-file(GLOB_RECURSE SOURCES "*.cpp")
 
-add_executable(unit_tests ${SOURCES})
-target_link_libraries(unit_tests ${Boost_LIBRARIES} lexer)
-
+add_subdirectory(./lexer_tests)

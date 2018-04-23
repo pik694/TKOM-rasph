@@ -2,3 +2,5 @@ TKOM
 *.DS_Store
 .idea/
 cmake-build-debug/
+build/
+.vscode/
