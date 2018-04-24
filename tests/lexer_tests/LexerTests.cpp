@@ -8,63 +8,65 @@
 
 #ifdef BOOST_TEST_DYN_LINK
 
-// #include "lexer/Lexer.h"
-// #include "common/tokens.h"
+#include "lexer/Lexer.h"
+#include "common/tokens/tokens.h"
 
-// using namespace rasph::lexer;
-// using namespace rasph::common;
+using namespace rasph::common;
 
 
 BOOST_AUTO_TEST_SUITE(lexer_test_suite)
 
-    // BOOST_AUTO_TEST_CASE(newly_created_lexer_should_be_at_line_1_column_1) {
-
-    //     //given: sample input stream and a lexer
-    //     std::string someText = "Some text";
-    //     std::istringstream inputStream(someText);
-    //     Lexer lexer(inputStream);
+    BOOST_AUTO_TEST_CASE(newly_created_lexer_should_be_at_line_1_column_1) {
 
 
-    //     //then: Lexer should be at line 1 and column 1
-    //     BOOST_CHECK_EQUAL(lexer.getLine(), 1);
-    //     BOOST_CHECK_EQUAL(lexer.getColumn(), 1);
 
-    // }
+        BOOST_CHECK_EQUAL(1,1);
+//        //given: sample input stream and a lexer
+//        std::string someText = "Some text";
+//        std::istringstream inputStream(someText);
+//        Lexer lexer(inputStream);
+//
+//
+//        //then: Lexer should be at line 1 and column 1
+//        BOOST_CHECK_EQUAL(lexer.getLine(), 1);
+//        BOOST_CHECK_EQUAL(lexer.getColumn(), 1);
 
-
-//     BOOST_AUTO_TEST_CASE(return_whole_string) {
-
-//         //given: sample input stream
-//         std::string someText = " %  Some text  !%";
-//         std::istringstream inputStream(someText);
-
-
-//         //when: I create a sample lexer from a stream
-//         Lexer lexer(inputStream);
-
-
-//         //then: strings should be equal
-//         BOOST_CHECK_EQUAL(lexer.getText(), someText);
-
-
-//     }
-
-//     BOOST_AUTO_TEST_CASE(return_if_token) {
-
-//         //given: sample input stream and a lexer
-//         std::string someText = " if some text";
-//         std::istringstream inputStream(someText);
-//         Lexer lexer(inputStream);
-
-//         //when: I fetch first token
-
-//         auto token = lexer.nextToken();
-
-//         //then: token should be 'if token'
-
-//         BOOST_CHECK_EQUAL(token.id(), tokens::if_token.id());
-
-//     }
+    }
+//
+//
+//    BOOST_AUTO_TEST_CASE(return_whole_string) {
+//
+//        //given: sample input stream
+//        std::string someText = " %  Some text  !  % ";
+//        std::istringstream inputStream(someText);
+//
+//
+//        //when: I create a sample lexer from a stream
+//        Lexer lexer(inputStream);
+//
+//
+//        //then: strings should be equal
+//        BOOST_CHECK_EQUAL(lexer.getText(), someText);
+//
+//
+//    }
+//
+//    BOOST_AUTO_TEST_CASE(return_if_token) {
+//
+//        //given: sample input stream and a lexer
+//        std::string someText = " if some text";
+//        std::istringstream inputStream(someText);
+//        Lexer lexer(inputStream);
+//
+//        //when: I fetch first token
+//
+//        auto token = lexer.nextToken();
+//
+//        //then: token should be 'if token'
+//
+//        BOOST_CHECK_EQUAL(token.id(), tokens::if_token.id());
+//
+//    }
 
 
 //     BOOST_AUTO_TEST_CASE(return_if_and_else_token) {

@@ -4,6 +4,4 @@ file(GLOB_RECURSE SOURCES "*.cpp")
 add_executable(lexer_unit_tests ../tests_main.cpp ${SOURCES} )
 
 target_include_directories(lexer_unit_tests PRIVATE ${Boost_INCLUDE_DIRS})
-target_link_libraries(lexer_unit_tests ${Boost_LIBRARIES} lexer common)
-
-add_test(NAME lexer_unit_tests COMMAND lexer_unit_tests --log_level=all WORKING_DIRECTORY tests/lexer_tests/)
+target_link_libraries(lexer_unit_tests ${Boost_LIBRARIES} lexer)
