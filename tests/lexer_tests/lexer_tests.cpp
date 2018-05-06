@@ -19,9 +19,8 @@ BOOST_AUTO_TEST_SUITE(lexer_unit_tests)
     BOOST_AUTO_TEST_CASE(check_proper_initialization) {
 
         const std::string someTextString = " if else for while ident + 1 -1 80 in handle ";
-        std::stringstream stream(someTextString);
 
-        Lexer lexer(stream);
+        Lexer lexer(std::make_unique<std::stringstream>(someTextString));
 
         BOOST_CHECK_EQUAL(lexer.getCurrentColumn(), 1);
         BOOST_CHECK_EQUAL(lexer.getCurrentLine(), 1);
@@ -32,9 +31,9 @@ BOOST_AUTO_TEST_SUITE(lexer_unit_tests)
     BOOST_AUTO_TEST_CASE(return_first_valid_token) {
 
         const std::string someTextString = "12345\n123456789\n1\n";
-        std::stringstream stream(someTextString);
 
-        Lexer lexer(stream);
+
+        Lexer lexer(std::make_unique<std::stringstream>(someTextString));
 
         BOOST_CHECK(lexer.getNextToken().is_initialized());
 
@@ -43,9 +42,9 @@ BOOST_AUTO_TEST_SUITE(lexer_unit_tests)
     BOOST_AUTO_TEST_CASE(recognise_first_valid_token) {
 
         const std::string someTextString = "12345\n123456789\n1\n";
-        std::stringstream stream(someTextString);
 
-        Lexer lexer(stream);
+
+        Lexer lexer(std::make_unique<std::stringstream>(someTextString));
 
 
         BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::NUM_LITERAL);
@@ -56,9 +55,9 @@ BOOST_AUTO_TEST_SUITE(lexer_unit_tests)
     BOOST_AUTO_TEST_CASE(should_skip_spaces_and_change_position) {
 
         const std::string someTextString = "  \n \n \n 123456789\n1\n";
-        std::stringstream stream(someTextString);
 
-        Lexer lexer(stream);
+
+        Lexer lexer(std::make_unique<std::stringstream>(someTextString));
 
         BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::NUM_LITERAL);
 
@@ -70,9 +69,9 @@ BOOST_AUTO_TEST_SUITE(lexer_unit_tests)
     BOOST_AUTO_TEST_CASE(should_skip_comment_and_change_position) {
 
         const std::string someTextString = "// 123456789\n 1\n";
-        std::stringstream stream(someTextString);
 
-        Lexer lexer(stream);
+
+        Lexer lexer(std::make_unique<std::stringstream>(someTextString));
 
         lexer.getNextToken();
 
@@ -84,9 +83,9 @@ BOOST_AUTO_TEST_SUITE(lexer_unit_tests)
     BOOST_AUTO_TEST_CASE(chained_comments) {
 
         const std::string someTextString = "// 123456789\n // 1 \n  12";
-        std::stringstream stream(someTextString);
 
-        Lexer lexer(stream);
+
+        Lexer lexer(std::make_unique<std::stringstream>(someTextString));
         lexer.getNextToken();
 
         BOOST_CHECK_EQUAL(lexer.getCurrentColumn(), 5);
@@ -97,9 +96,9 @@ BOOST_AUTO_TEST_SUITE(lexer_unit_tests)
     BOOST_AUTO_TEST_CASE(comment_inside_comment) {
 
         const std::string someTextString = "// 123456789// commenbt\n1 \n  12";
-        std::stringstream stream(someTextString);
 
-        Lexer lexer(stream);
+
+        Lexer lexer(std::make_unique<std::stringstream>(someTextString));
         lexer.getNextToken();
 
         BOOST_CHECK_EQUAL(lexer.getCurrentColumn(), 2);
@@ -110,9 +109,9 @@ BOOST_AUTO_TEST_SUITE(lexer_unit_tests)
     BOOST_AUTO_TEST_CASE(recognise_first_token) {
 
         const std::string someTextString = " 12";
-        std::stringstream stream(someTextString);
 
-        Lexer lexer(stream);
+
+        Lexer lexer(std::make_unique<std::stringstream>(someTextString));
         auto optionalToken = lexer.getNextToken();
 
         BOOST_REQUIRE(optionalToken.is_initialized());
@@ -127,9 +126,9 @@ BOOST_AUTO_TEST_SUITE(lexer_unit_tests)
 
     BOOST_AUTO_TEST_CASE(check_file_end) {
         const std::string someTextString = " // ";
-        std::stringstream stream(someTextString);
 
-        Lexer lexer(stream);
+
+        Lexer lexer(std::make_unique<std::stringstream>(someTextString));
         auto optionalToken = lexer.getNextToken();
 
         BOOST_CHECK_EQUAL(optionalToken.is_initialized(), false);
@@ -138,9 +137,9 @@ BOOST_AUTO_TEST_SUITE(lexer_unit_tests)
     BOOST_AUTO_TEST_CASE(get_two_tokens) {
 
         const std::string someTextString = " 12 12";
-        std::stringstream stream(someTextString);
 
-        Lexer lexer(stream);
+
+        Lexer lexer(std::make_unique<std::stringstream>(someTextString));
         auto optionalToken = lexer.getNextToken();
 
         BOOST_REQUIRE(optionalToken.is_initialized());
@@ -164,9 +163,9 @@ BOOST_AUTO_TEST_SUITE(lexer_unit_tests)
 
     BOOST_AUTO_TEST_CASE(check_text_literal) {
         const std::string someTextString = " \"hello\" ";
-        std::stringstream stream(someTextString);
 
-        Lexer lexer(stream);
+
+        Lexer lexer(std::make_unique<std::stringstream>(someTextString));
         auto optionalToken = lexer.getNextToken();
 
         BOOST_REQUIRE(optionalToken.is_initialized());
@@ -179,9 +178,9 @@ BOOST_AUTO_TEST_SUITE(lexer_unit_tests)
 
     BOOST_AUTO_TEST_CASE(check_text_literal_should_throw) {
         const std::string someTextString = " \"hello ";
-        std::stringstream stream(someTextString);
 
-        Lexer lexer(stream);
+
+        Lexer lexer(std::make_unique<std::stringstream>(someTextString));
 
         BOOST_CHECK_THROW(lexer.getNextToken(), std::invalid_argument);
 
@@ -190,9 +189,9 @@ BOOST_AUTO_TEST_SUITE(lexer_unit_tests)
 
     BOOST_AUTO_TEST_CASE(should_return_last_keyword) {
         const std::string someTextString = " for";
-        std::stringstream stream(someTextString);
 
-        Lexer lexer(stream);
+
+        Lexer lexer(std::make_unique<std::stringstream>(someTextString));
 
         auto optionalToken = lexer.getNextToken();
 
@@ -206,9 +205,9 @@ BOOST_AUTO_TEST_SUITE(lexer_unit_tests)
 
     BOOST_AUTO_TEST_CASE(should_return_last_identifier) {
         const std::string someTextString = " for1";
-        std::stringstream stream(someTextString);
 
-        Lexer lexer(stream);
+
+        Lexer lexer(std::make_unique<std::stringstream>(someTextString));
 
         auto optionalToken = lexer.getNextToken();
 
@@ -224,9 +223,9 @@ BOOST_AUTO_TEST_SUITE(lexer_unit_tests)
 
     BOOST_AUTO_TEST_CASE(should_throw_invalid_number) {
         const std::string someTextString = " 1.1.1";
-        std::stringstream stream(someTextString);
 
-        Lexer lexer(stream);
+
+        Lexer lexer(std::make_unique<std::stringstream>(someTextString));
 
         BOOST_CHECK_THROW(lexer.getNextToken(), std::invalid_argument);
     }
@@ -234,9 +233,9 @@ BOOST_AUTO_TEST_SUITE(lexer_unit_tests)
     BOOST_AUTO_TEST_CASE(parse_several_tokens) {
 
         const std::string someTextString = " for i in Range(1, 2) { if i == 10 { System.print(true)}} ";
-        std::stringstream stream(someTextString);
 
-        Lexer lexer(stream);
+
+        Lexer lexer(std::make_unique<std::stringstream>(someTextString));
 
 
         BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::FOR);
@@ -272,9 +271,9 @@ BOOST_AUTO_TEST_SUITE(lexer_unit_tests)
     BOOST_AUTO_TEST_CASE(parse_several_tokens_1) {
 
         const std::string someTextString = " for i in Range(1, 2) { if i == 10 { System.print( \" Hello \" )}} ";
-        std::stringstream stream(someTextString);
 
-        Lexer lexer(stream);
+
+        Lexer lexer(std::make_unique<std::stringstream>(someTextString));
 
 
         BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::FOR);
@@ -306,7 +305,6 @@ BOOST_AUTO_TEST_SUITE(lexer_unit_tests)
 
 
     }
-
 
 
 BOOST_AUTO_TEST_SUITE_END()

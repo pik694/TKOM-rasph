@@ -17,9 +17,9 @@ size_t rasph::lexer::Lexer::getCurrentColumn() const {
     return column_;
 }
 
-rasph::lexer::Lexer::Lexer(std::istream &inputStream) :
-        inputStream_(inputStream),
-        iterator_(*this, inputStream >> std::noskipws), // do not skip whitespaces
+rasph::lexer::Lexer::Lexer(std::unique_ptr<std::istream> &&inputStream) :
+        inputStream_(std::move(inputStream)),
+        iterator_(*this, (*inputStream) >> std::noskipws), // do not skip whitespaces
         end_() {
 
 }
@@ -27,6 +27,9 @@ rasph::lexer::Lexer::Lexer(std::istream &inputStream) :
 boost::optional<Token> rasph::lexer::Lexer::getNextToken() {
 
     skipWhitespacesAndComments();
+
+    const int tokenColumn = column_;
+    const int tokenLine = line_;
 
     if (*iterator_ == end_) return boost::none;
 
@@ -41,7 +44,7 @@ void rasph::lexer::Lexer::skipWhitespacesAndComments() {
 
     while (*iterator_ != end_) {
 
-        if (**iterator_ == '/' && inputStream_.peek() == '/') {
+        if (**iterator_ == '/' && inputStream_->peek() == '/') {
             comment = true;
         }
         if (**iterator_ == '\n') comment = false;

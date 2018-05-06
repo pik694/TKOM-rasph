@@ -20,9 +20,7 @@ BOOST_AUTO_TEST_SUITE(lexer_unit_tests)
 
         std::for_each(KEYWORDS.begin(), KEYWORDS.end(), [](auto pair) {
 
-            std::stringstream stream(pair.first);
-
-            Lexer lexer(stream);
+            Lexer lexer(std::make_unique<std::stringstream>(pair.first));
 
             BOOST_CHECK(lexer.getNextToken().value().getType() == pair.second);
 
@@ -35,9 +33,7 @@ BOOST_AUTO_TEST_SUITE(lexer_unit_tests)
 
         std::for_each(SIMPLE_SIGNS.begin(), SIMPLE_SIGNS.end(), [](auto pair) {
 
-            std::stringstream stream(pair.first);
-
-            Lexer lexer(stream);
+            Lexer lexer(std::make_unique<std::stringstream>(pair.first));
 
             BOOST_CHECK(lexer.getNextToken().value().getType() == pair.second);
 
@@ -50,9 +46,7 @@ BOOST_AUTO_TEST_SUITE(lexer_unit_tests)
 
         std::for_each(SIMPLE_SIGNS.begin(), SIMPLE_SIGNS.end(), [](auto pair) {
 
-            std::stringstream stream("//comment \n //\"hello\"   \n     " + pair.first + " some other okens");
-
-            Lexer lexer(stream);
+            Lexer lexer(std::make_unique<std::stringstream>("//comment \n //\"hello\"   \n     " + pair.first + " some other okens"));
 
             BOOST_CHECK(lexer.getNextToken().value().getType() == pair.second);
 
