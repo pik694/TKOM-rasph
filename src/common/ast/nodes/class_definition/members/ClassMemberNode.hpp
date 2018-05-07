@@ -6,7 +6,7 @@
 #define RASPH_CLASSMEMBERSNODE_HPP
 
 
-#include <common/program/ProgramNode.hpp>
+#include <common/ast/ProgramNode.hpp>
 #include <string>
 
 namespace rasph::common::program::nodes {

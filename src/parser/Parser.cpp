@@ -2,7 +2,7 @@
 // Created by Piotr Żelazko on 06.05.2018.
 //
 
-#include "common/program/nodes/class_definition/ClassNode.hpp"
+#include "common/ast/nodes/class_definition/ClassNode.hpp"
 #include "Parser.hpp"
 #include "NodesFactory.hpp"
 

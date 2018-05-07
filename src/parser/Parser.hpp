@@ -8,8 +8,8 @@
 #include <memory>
 #include <deque>
 #include <lexer/Lexer.h>
-#include <common/program/ProgramTree.hpp>
-#include <common/program/ProgramNode.hpp>
+#include <common/ast/ProgramTree.hpp>
+#include <common/ast/ProgramNode.hpp>
 #include <stack>
 
 namespace rasph::parser {

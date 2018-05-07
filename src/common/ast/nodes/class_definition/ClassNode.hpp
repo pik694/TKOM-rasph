@@ -5,7 +5,7 @@
 #ifndef RASPH_CLASSNODE_HPP
 #define RASPH_CLASSNODE_HPP
 
-#include <common/program/ProgramNode.hpp>
+#include <common/ast/ProgramNode.hpp>
 #include "members/ClassMemberNode.hpp"
 #include <string>
 #include <vector>

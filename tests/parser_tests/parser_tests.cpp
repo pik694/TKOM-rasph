@@ -8,7 +8,7 @@
 #include <boost/test/unit_test.hpp>
 #include <lexer/Lexer.h>
 #include <parser/Parser.hpp>
-#include <common/program/nodes/class_definition/ClassNode.hpp>
+#include <common/ast/nodes/class_definition/ClassNode.hpp>
 
 using namespace rasph::lexer;
 using namespace rasph::common::tokens;
@@ -67,6 +67,25 @@ BOOST_AUTO_TEST_SUITE(parser_tests)
         auto node = dynamic_cast<nodes::ClassNode *>(tree->getNodes().at(0).get());
 
         BOOST_CHECK_EQUAL(node->getMembers().size(), 2);
+
+    }
+
+
+    BOOST_AUTO_TEST_CASE(parse_class_with_method) {
+
+        std::string sample_code = "class aClass { func aFunc (){} \n var aVar event anEvent }";
+
+        std::unique_ptr<Lexer> lexer = std::make_unique<Lexer>(
+                std::make_unique<std::stringstream>(sample_code)
+        );
+
+        Parser parser(std::move(lexer));
+
+        auto tree = parser.parse();
+
+        auto node = dynamic_cast<nodes::ClassNode *>(tree->getNodes().at(0).get());
+
+        BOOST_CHECK_EQUAL(node->getMembers().size(), 3);
 
     }
 

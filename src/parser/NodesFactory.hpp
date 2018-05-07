@@ -6,9 +6,9 @@
 #define RASPH_NODESFACTORY_HPP
 
 #include "Parser.hpp"
-#include <common/program/nodes/class_definition/ClassNode.hpp>
-#include <common/program/nodes/class_definition/members/EventMemberNode.hpp>
-#include <common/program/nodes/class_definition/members/AttributeMemberNode.hpp>
+#include <common/ast/nodes/class_definition/ClassNode.hpp>
+#include <common/ast/nodes/class_definition/members/EventMemberNode.hpp>
+#include <common/ast/nodes/class_definition/members/AttributeMemberNode.hpp>
 
 
 namespace rasph::parser {
