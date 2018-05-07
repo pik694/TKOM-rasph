@@ -13,10 +13,12 @@ namespace rasph::common::program {
     public:
         void add(std::unique_ptr<ProgramNode> node);
 
+        const std::vector<std::shared_ptr<ProgramNode>> &getNodes() const;
+
         bool isEmpty();
 
     private:
-        std::vector<std::unique_ptr<ProgramNode>> atomicNodes_;
+        std::vector<std::shared_ptr<ProgramNode>> atomicNodes_;
     };
 
 }

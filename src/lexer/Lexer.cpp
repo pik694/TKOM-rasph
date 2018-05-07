@@ -32,7 +32,7 @@ std::unique_ptr<Token> rasph::lexer::Lexer::getNextToken() {
 //    const int tokenColumn = column_;
 //    const int tokenLine = line_;
 
-    if (*iterator_ == end_) return nullptr;
+    if (*iterator_ == end_) return std::make_unique<Token>(TokenType::END);
 
     return std::make_unique<Token>(getToken());
 

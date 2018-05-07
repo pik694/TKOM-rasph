@@ -47,7 +47,8 @@ namespace rasph::common::tokens {
 
         NUM_LITERAL,
         TEXT_LITERAL,
-        IDENTIFIER
+        IDENTIFIER,
+        END
     };
 
     extern const std::unordered_map<std::string, TokenType>

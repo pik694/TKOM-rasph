@@ -20,24 +20,27 @@ namespace rasph::parser {
     public:
         Parser(std::unique_ptr<lexer::Lexer> lexer);
 
-        Parser(const Parser&) = delete;
+        Parser(const Parser &) = delete;
 
         std::shared_ptr<rasph::common::program::ProgramTree> parse();
 
         virtual ~Parser() = default;
 
     private:
-        template <typename T>
-        friend class SpecialisedNodeFactory;
+
+        template<typename T>
+        friend
+        class SpecialisedNodeFactory;
 
         std::shared_ptr<rasph::common::tokens::Token> peekToken();
-        void unpeekToken();
 
-        void popToken();
+        void unpeekTokens(size_t count = 1);
+
+        void popTokens(size_t count = 1);
 
         std::unique_ptr<rasph::lexer::Lexer> lexer_;
         std::deque<std::shared_ptr<rasph::common::tokens::Token>> tokensBuffer_;
-        std::stack<std::shared_ptr<rasph::common::tokens::Token>> peekedTokens_;
+        std::deque<std::shared_ptr<rasph::common::tokens::Token>> peekedTokens_;
 
     };
 }

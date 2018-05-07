@@ -131,7 +131,7 @@ BOOST_AUTO_TEST_SUITE(lexer_unit_tests)
         Lexer lexer(std::make_unique<std::stringstream>(someTextString));
         auto optionalToken = lexer.getNextToken();
 
-        BOOST_CHECK(optionalToken.get() == nullptr);
+        BOOST_CHECK(optionalToken.get()->getType() == TokenType::END);
     }
 
     BOOST_AUTO_TEST_CASE(get_two_tokens) {
@@ -263,7 +263,7 @@ BOOST_AUTO_TEST_SUITE(lexer_unit_tests)
         BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::CBRACKET_RIGHT);
 
 
-        BOOST_CHECK(lexer.getNextToken().get() == nullptr);
+        BOOST_CHECK(lexer.getNextToken().get()->getType() == TokenType::END);
 
 
     }
@@ -301,7 +301,7 @@ BOOST_AUTO_TEST_SUITE(lexer_unit_tests)
         BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::CBRACKET_RIGHT);
 
 
-        BOOST_CHECK(lexer.getNextToken().get() == nullptr);
+        BOOST_CHECK(lexer.getNextToken().get()->getType() == TokenType::END);
 
 
     }

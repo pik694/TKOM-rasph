@@ -14,3 +14,7 @@ void ProgramTree::add(std::unique_ptr<ProgramNode> node) {
 bool ProgramTree::isEmpty() {
     return atomicNodes_.empty();
 }
+
+const std::vector<std::shared_ptr<ProgramNode>> &ProgramTree::getNodes() const {
+    return atomicNodes_;
+}
