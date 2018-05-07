@@ -24,7 +24,7 @@ namespace rasph::lexer {
 
         size_t getCurrentColumn() const;
 
-        boost::optional<rasph::common::tokens::Token> getNextToken();
+        std::unique_ptr<rasph::common::tokens::Token> getNextToken();
 
         virtual ~Lexer() = default;
 

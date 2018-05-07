@@ -22,7 +22,7 @@ BOOST_AUTO_TEST_SUITE(lexer_unit_tests)
 
             Lexer lexer(std::make_unique<std::stringstream>(pair.first));
 
-            BOOST_CHECK(lexer.getNextToken().value().getType() == pair.second);
+            BOOST_CHECK(lexer.getNextToken()->getType() == pair.second);
 
         });
 
@@ -35,7 +35,7 @@ BOOST_AUTO_TEST_SUITE(lexer_unit_tests)
 
             Lexer lexer(std::make_unique<std::stringstream>(pair.first));
 
-            BOOST_CHECK(lexer.getNextToken().value().getType() == pair.second);
+            BOOST_CHECK(lexer.getNextToken()->getType() == pair.second);
 
         });
 
@@ -48,7 +48,7 @@ BOOST_AUTO_TEST_SUITE(lexer_unit_tests)
 
             Lexer lexer(std::make_unique<std::stringstream>("//comment \n //\"hello\"   \n     " + pair.first + " some other okens"));
 
-            BOOST_CHECK(lexer.getNextToken().value().getType() == pair.second);
+            BOOST_CHECK(lexer.getNextToken()->getType() == pair.second);
 
         });
 

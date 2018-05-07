@@ -35,7 +35,7 @@ BOOST_AUTO_TEST_SUITE(lexer_unit_tests)
 
         Lexer lexer(std::make_unique<std::stringstream>(someTextString));
 
-        BOOST_CHECK(lexer.getNextToken().is_initialized());
+        BOOST_CHECK( lexer.getNextToken() != nullptr);
 
     }
 
@@ -47,7 +47,7 @@ BOOST_AUTO_TEST_SUITE(lexer_unit_tests)
         Lexer lexer(std::make_unique<std::stringstream>(someTextString));
 
 
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::NUM_LITERAL);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::NUM_LITERAL);
 
     }
 
@@ -59,7 +59,7 @@ BOOST_AUTO_TEST_SUITE(lexer_unit_tests)
 
         Lexer lexer(std::make_unique<std::stringstream>(someTextString));
 
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::NUM_LITERAL);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::NUM_LITERAL);
 
         BOOST_CHECK_EQUAL(lexer.getCurrentColumn(), 0);
         BOOST_CHECK_EQUAL(lexer.getCurrentLine(), 5);
@@ -114,13 +114,13 @@ BOOST_AUTO_TEST_SUITE(lexer_unit_tests)
         Lexer lexer(std::make_unique<std::stringstream>(someTextString));
         auto optionalToken = lexer.getNextToken();
 
-        BOOST_REQUIRE(optionalToken.is_initialized());
+        BOOST_REQUIRE(optionalToken);
 
         auto token = optionalToken.get();
 
-        BOOST_CHECK(token.getType() == TokenType::NUM_LITERAL);
-        BOOST_CHECK_EQUAL(token.getDoubleValue(), 12);
-        BOOST_CHECK_THROW(token.getTextValue(), std::logic_error);
+        BOOST_CHECK(token->getType() == TokenType::NUM_LITERAL);
+        BOOST_CHECK_EQUAL(token->getDoubleValue(), 12);
+        BOOST_CHECK_THROW(token->getTextValue(), std::logic_error);
 
     }
 
@@ -131,7 +131,7 @@ BOOST_AUTO_TEST_SUITE(lexer_unit_tests)
         Lexer lexer(std::make_unique<std::stringstream>(someTextString));
         auto optionalToken = lexer.getNextToken();
 
-        BOOST_CHECK_EQUAL(optionalToken.is_initialized(), false);
+        BOOST_CHECK(optionalToken.get() == nullptr);
     }
 
     BOOST_AUTO_TEST_CASE(get_two_tokens) {
@@ -142,22 +142,22 @@ BOOST_AUTO_TEST_SUITE(lexer_unit_tests)
         Lexer lexer(std::make_unique<std::stringstream>(someTextString));
         auto optionalToken = lexer.getNextToken();
 
-        BOOST_REQUIRE(optionalToken.is_initialized());
+        BOOST_REQUIRE(optionalToken.get() != nullptr);
 
         auto token = optionalToken.get();
 
-        BOOST_CHECK(token.getType() == TokenType::NUM_LITERAL);
-        BOOST_CHECK_EQUAL(token.getDoubleValue(), 12);
+        BOOST_CHECK(token->getType() == TokenType::NUM_LITERAL);
+        BOOST_CHECK_EQUAL(token->getDoubleValue(), 12);
 
 
         auto secondOptionalToken = lexer.getNextToken();
 
-        BOOST_REQUIRE(secondOptionalToken.is_initialized());
+        BOOST_REQUIRE(secondOptionalToken.get() != nullptr);
 
         auto secondToken = secondOptionalToken.get();
 
-        BOOST_CHECK(secondToken.getType() == TokenType::NUM_LITERAL);
-        BOOST_CHECK_EQUAL(secondToken.getDoubleValue(), 12);
+        BOOST_CHECK(secondToken->getType() == TokenType::NUM_LITERAL);
+        BOOST_CHECK_EQUAL(secondToken->getDoubleValue(), 12);
 
     }
 
@@ -168,12 +168,12 @@ BOOST_AUTO_TEST_SUITE(lexer_unit_tests)
         Lexer lexer(std::make_unique<std::stringstream>(someTextString));
         auto optionalToken = lexer.getNextToken();
 
-        BOOST_REQUIRE(optionalToken.is_initialized());
+        BOOST_REQUIRE(optionalToken.get() != nullptr);
 
         auto token = optionalToken.get();
 
-        BOOST_CHECK(token.getType() == TokenType::TEXT_LITERAL);
-        BOOST_CHECK_EQUAL(token.getTextValue(), "hello");
+        BOOST_CHECK(token->getType() == TokenType::TEXT_LITERAL);
+        BOOST_CHECK_EQUAL(token->getTextValue(), "hello");
     }
 
     BOOST_AUTO_TEST_CASE(check_text_literal_should_throw) {
@@ -195,11 +195,11 @@ BOOST_AUTO_TEST_SUITE(lexer_unit_tests)
 
         auto optionalToken = lexer.getNextToken();
 
-        BOOST_REQUIRE(optionalToken.is_initialized());
+        BOOST_REQUIRE(optionalToken.get() != nullptr);
 
         auto token = optionalToken.get();
 
-        BOOST_CHECK(token.getType() == TokenType::FOR);
+        BOOST_CHECK(token->getType() == TokenType::FOR);
 
     }
 
@@ -211,12 +211,12 @@ BOOST_AUTO_TEST_SUITE(lexer_unit_tests)
 
         auto optionalToken = lexer.getNextToken();
 
-        BOOST_REQUIRE(optionalToken.is_initialized());
+        BOOST_REQUIRE(optionalToken.get() != nullptr);
 
         auto token = optionalToken.get();
 
-        BOOST_CHECK(token.getType() == TokenType::IDENTIFIER);
-        BOOST_CHECK_EQUAL(token.getTextValue(), "for1");
+        BOOST_CHECK(token->getType() == TokenType::IDENTIFIER);
+        BOOST_CHECK_EQUAL(token->getTextValue(), "for1");
 
 
     }
@@ -238,32 +238,32 @@ BOOST_AUTO_TEST_SUITE(lexer_unit_tests)
         Lexer lexer(std::make_unique<std::stringstream>(someTextString));
 
 
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::FOR);
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::IDENTIFIER);
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::IN);
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::IDENTIFIER);
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::PARENTHESIS_LEFT);
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::NUM_LITERAL);
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::COMMA);
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::NUM_LITERAL);
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::PARENTHESIS_RIGHT);
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::CBRACKET_LEFT);
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::IF);
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::IDENTIFIER);
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::EQUAL);
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::NUM_LITERAL);
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::CBRACKET_LEFT);
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::IDENTIFIER);
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::DOT);
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::IDENTIFIER);
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::PARENTHESIS_LEFT);
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::TRUE);
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::PARENTHESIS_RIGHT);
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::CBRACKET_RIGHT);
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::CBRACKET_RIGHT);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::FOR);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::IDENTIFIER);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::IN);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::IDENTIFIER);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::PARENTHESIS_LEFT);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::NUM_LITERAL);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::COMMA);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::NUM_LITERAL);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::PARENTHESIS_RIGHT);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::CBRACKET_LEFT);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::IF);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::IDENTIFIER);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::EQUAL);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::NUM_LITERAL);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::CBRACKET_LEFT);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::IDENTIFIER);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::DOT);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::IDENTIFIER);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::PARENTHESIS_LEFT);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::TRUE);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::PARENTHESIS_RIGHT);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::CBRACKET_RIGHT);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::CBRACKET_RIGHT);
 
 
-        BOOST_CHECK_EQUAL(lexer.getNextToken().is_initialized(), false);
+        BOOST_CHECK(lexer.getNextToken().get() == nullptr);
 
 
     }
@@ -276,32 +276,32 @@ BOOST_AUTO_TEST_SUITE(lexer_unit_tests)
         Lexer lexer(std::make_unique<std::stringstream>(someTextString));
 
 
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::FOR);
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::IDENTIFIER);
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::IN);
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::IDENTIFIER);
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::PARENTHESIS_LEFT);
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::NUM_LITERAL);
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::COMMA);
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::NUM_LITERAL);
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::PARENTHESIS_RIGHT);
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::CBRACKET_LEFT);
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::IF);
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::IDENTIFIER);
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::EQUAL);
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::NUM_LITERAL);
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::CBRACKET_LEFT);
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::IDENTIFIER);
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::DOT);
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::IDENTIFIER);
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::PARENTHESIS_LEFT);
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::TEXT_LITERAL);
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::PARENTHESIS_RIGHT);
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::CBRACKET_RIGHT);
-        BOOST_CHECK(lexer.getNextToken().value().getType() == TokenType::CBRACKET_RIGHT);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::FOR);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::IDENTIFIER);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::IN);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::IDENTIFIER);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::PARENTHESIS_LEFT);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::NUM_LITERAL);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::COMMA);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::NUM_LITERAL);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::PARENTHESIS_RIGHT);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::CBRACKET_LEFT);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::IF);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::IDENTIFIER);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::EQUAL);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::NUM_LITERAL);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::CBRACKET_LEFT);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::IDENTIFIER);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::DOT);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::IDENTIFIER);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::PARENTHESIS_LEFT);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::TEXT_LITERAL);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::PARENTHESIS_RIGHT);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::CBRACKET_RIGHT);
+        BOOST_CHECK(lexer.getNextToken()->getType() == TokenType::CBRACKET_RIGHT);
 
 
-        BOOST_CHECK_EQUAL(lexer.getNextToken().is_initialized(), false);
+        BOOST_CHECK(lexer.getNextToken().get() == nullptr);
 
 
     }

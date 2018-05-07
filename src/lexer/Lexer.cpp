@@ -24,16 +24,17 @@ rasph::lexer::Lexer::Lexer(std::unique_ptr<std::istream> &&inputStream) :
 
 }
 
-boost::optional<Token> rasph::lexer::Lexer::getNextToken() {
+std::unique_ptr<Token> rasph::lexer::Lexer::getNextToken() {
 
     skipWhitespacesAndComments();
 
-    const int tokenColumn = column_;
-    const int tokenLine = line_;
+//TODO: add token position
+//    const int tokenColumn = column_;
+//    const int tokenLine = line_;
 
-    if (*iterator_ == end_) return boost::none;
+    if (*iterator_ == end_) return nullptr;
 
-    return getToken();
+    return std::make_unique<Token>(getToken());
 
 }
 
