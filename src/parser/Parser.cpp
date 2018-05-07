@@ -25,3 +25,41 @@ std::shared_ptr<rasph::common::program::ProgramTree> rasph::parser::Parser::pars
     return programTree;
 
 }
+
+void Parser::popToken() {
+    if (!peekedTokens_.empty()) {
+        peekedTokens_.pop();
+    }
+}
+
+void Parser::unpeekToken() {
+    if (!peekedTokens_.empty()) {
+        tokensBuffer_.push_front(peekedTokens_.top());
+    }
+}
+
+std::shared_ptr<rasph::common::tokens::Token> Parser::peekToken() {
+
+    std::shared_ptr<rasph::common::tokens::Token> token;
+
+    if (!tokensBuffer_.empty()) {
+        token = tokensBuffer_.front();
+        tokensBuffer_.pop_front();
+    }
+    else{
+        token = std::move(lexer_->getNextToken());
+    }
+
+
+    if (!token){
+        throw std::invalid_argument("There are no more tokens");
+    }
+
+    peekedTokens_.push(token);
+    return token;
+
+}
+
+
+
+

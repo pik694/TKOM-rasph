@@ -10,6 +10,7 @@
 #include <lexer/Lexer.h>
 #include <common/program/ProgramTree.hpp>
 #include <common/program/ProgramNode.hpp>
+#include <stack>
 
 namespace rasph::parser {
 
@@ -29,8 +30,14 @@ namespace rasph::parser {
         template <typename T>
         friend class SpecialisedNodeFactory;
 
+        std::shared_ptr<rasph::common::tokens::Token> peekToken();
+        void unpeekToken();
+
+        void popToken();
+
         std::unique_ptr<rasph::lexer::Lexer> lexer_;
-        std::deque<rasph::common::tokens::Token> tokensBuffer_;
+        std::deque<std::shared_ptr<rasph::common::tokens::Token>> tokensBuffer_;
+        std::stack<std::shared_ptr<rasph::common::tokens::Token>> peekedTokens_;
 
     };
 }
