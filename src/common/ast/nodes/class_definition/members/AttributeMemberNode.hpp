@@ -10,7 +10,7 @@
 namespace rasph::common::ast::nodes {
     class AttributeMemberNode : public ClassMemberNode{
     public:
-        AttributeMemberNode(const std::string &name);
+        AttributeMemberNode(const std::string &name) : ClassMemberNode(name){};
     };
 }
 

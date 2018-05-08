@@ -71,7 +71,7 @@ BOOST_AUTO_TEST_SUITE(parser_tests)
     }
 
 
-    BOOST_AUTO_TEST_CASE(parse_class_with_method) {
+    BOOST_AUTO_TEST_CASE(parse_class_with_empty_method) {
 
         std::string sample_code = "class aClass { func aFunc (){} \n var aVar \n event anEvent }";
 

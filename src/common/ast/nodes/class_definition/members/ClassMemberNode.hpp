@@ -12,9 +12,9 @@
 namespace rasph::common::ast::nodes {
     class ClassMemberNode : public ProgramNode {
     public:
-        ClassMemberNode(const std::string &name);
+        ClassMemberNode(const std::string &name): name_(name){}
 
-        const std::string &getName() const;
+        const std::string &getName() const { return name_;}
 
     private:
         const std::string name_;

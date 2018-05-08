@@ -10,7 +10,7 @@
 namespace rasph::common::ast::nodes {
     class EventMemberNode : public ClassMemberNode{
     public:
-        EventMemberNode(const std::string &name);
+        EventMemberNode(const std::string &name) : ClassMemberNode(name) {}
     };
 }
 
