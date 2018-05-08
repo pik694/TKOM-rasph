@@ -4,9 +4,9 @@
 
 #include "ClassNode.hpp"
 
-using namespace rasph::common::program::nodes;
+using namespace rasph::common::ast::nodes;
 
-rasph::common::program::nodes::ClassNode::ClassNode(const std::string &name) : name_(name) {}
+rasph::common::ast::nodes::ClassNode::ClassNode(const std::string &name) : name_(name) {}
 
 const std::string &ClassNode::getName() const {
     return name_;

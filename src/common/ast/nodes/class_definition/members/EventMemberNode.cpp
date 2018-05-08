@@ -4,4 +4,4 @@
 
 #include "EventMemberNode.hpp"
 
-rasph::common::program::nodes::EventMemberNode::EventMemberNode(const std::string &name) : ClassMemberNode(name) {}
+rasph::common::ast::nodes::EventMemberNode::EventMemberNode(const std::string &name) : ClassMemberNode(name) {}

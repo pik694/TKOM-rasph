@@ -5,7 +5,7 @@
 #ifndef RASPH_PROGRAMNODE_HPP
 #define RASPH_PROGRAMNODE_HPP
 
-namespace rasph::common::program {
+namespace rasph::common::ast {
     class ProgramNode {
     public:
         virtual ~ProgramNode() = 0;

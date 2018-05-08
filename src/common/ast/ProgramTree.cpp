@@ -4,7 +4,7 @@
 
 #include "ProgramTree.hpp"
 
-using namespace rasph::common::program;
+using namespace rasph::common::ast;
 
 void ProgramTree::add(std::unique_ptr<ProgramNode> node) {
     atomicNodes_.push_back(std::move(node));

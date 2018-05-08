@@ -8,7 +8,7 @@
 #include <vector>
 #include "ProgramNode.hpp"
 
-namespace rasph::common::program {
+namespace rasph::common::ast {
     class ProgramTree {
     public:
         void add(std::unique_ptr<ProgramNode> node);

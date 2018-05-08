@@ -14,7 +14,7 @@
 
 namespace rasph::parser {
 
-    using node_ptr_t = std::unique_ptr<rasph::common::program::ProgramNode>;
+    using node_ptr_t = std::unique_ptr<rasph::common::ast::ProgramNode>;
 
     class Parser {
     public:
@@ -22,21 +22,23 @@ namespace rasph::parser {
 
         Parser(const Parser &) = delete;
 
-        std::shared_ptr<rasph::common::program::ProgramTree> parse();
+        std::shared_ptr<rasph::common::ast::ProgramTree> parse();
 
         virtual ~Parser() = default;
 
     private:
 
-        template<typename T>
+        template<typename ... Args>
         friend
-        class SpecialisedNodeFactory;
+        class NodesFactory;
 
         std::shared_ptr<rasph::common::tokens::Token> peekToken();
-
         void unpeekTokens(size_t count = 1);
-
         void popTokens(size_t count = 1);
+
+        template <typename ... Args>
+        node_ptr_t tryParse();
+
 
         std::unique_ptr<rasph::lexer::Lexer> lexer_;
         std::deque<std::shared_ptr<rasph::common::tokens::Token>> tokensBuffer_;

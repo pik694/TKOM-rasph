@@ -7,7 +7,7 @@
 
 #include "ClassMemberNode.hpp"
 
-namespace rasph::common::program::nodes {
+namespace rasph::common::ast::nodes {
     class EventMemberNode : public ClassMemberNode{
     public:
         EventMemberNode(const std::string &name);

@@ -10,7 +10,7 @@
 #include <string>
 #include <vector>
 
-namespace rasph::common::program::nodes {
+namespace rasph::common::ast::nodes {
     class ClassNode : public ProgramNode{
     public:
         explicit ClassNode(const std::string &name);

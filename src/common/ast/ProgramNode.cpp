@@ -4,6 +4,6 @@
 
 #include "ProgramNode.hpp"
 
-using namespace rasph::common::program;
+using namespace rasph::common::ast;
 
 ProgramNode::~ProgramNode() {}

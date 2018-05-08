@@ -4,7 +4,7 @@
 
 #include "AttributeMemberNode.hpp"
 
-rasph::common::program::nodes::AttributeMemberNode::AttributeMemberNode(const std::string &name) : ClassMemberNode(
+rasph::common::ast::nodes::AttributeMemberNode::AttributeMemberNode(const std::string &name) : ClassMemberNode(
         name) {
 
 }

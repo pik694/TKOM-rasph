@@ -7,7 +7,7 @@
 
 #include "ClassMemberNode.hpp"
 
-namespace rasph::common::program::nodes {
+namespace rasph::common::ast::nodes {
     class AttributeMemberNode : public ClassMemberNode{
     public:
         AttributeMemberNode(const std::string &name);

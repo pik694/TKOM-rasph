@@ -4,8 +4,8 @@
 
 #include "ClassMemberNode.hpp"
 
-rasph::common::program::nodes::ClassMemberNode::ClassMemberNode(const std::string &name) : name_(name) {}
+rasph::common::ast::nodes::ClassMemberNode::ClassMemberNode(const std::string &name) : name_(name) {}
 
-const std::string &rasph::common::program::nodes::ClassMemberNode::getName() const {
+const std::string &rasph::common::ast::nodes::ClassMemberNode::getName() const {
     return name_;
 }

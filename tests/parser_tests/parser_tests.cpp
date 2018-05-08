@@ -12,7 +12,7 @@
 
 using namespace rasph::lexer;
 using namespace rasph::common::tokens;
-using namespace rasph::common::program;
+using namespace rasph::common::ast;
 using namespace rasph::parser;
 
 BOOST_AUTO_TEST_SUITE(parser_tests)
@@ -73,7 +73,7 @@ BOOST_AUTO_TEST_SUITE(parser_tests)
 
     BOOST_AUTO_TEST_CASE(parse_class_with_method) {
 
-        std::string sample_code = "class aClass { func aFunc (){} \n var aVar event anEvent }";
+        std::string sample_code = "class aClass { func aFunc (){} \n var aVar \n event anEvent }";
 
         std::unique_ptr<Lexer> lexer = std::make_unique<Lexer>(
                 std::make_unique<std::stringstream>(sample_code)

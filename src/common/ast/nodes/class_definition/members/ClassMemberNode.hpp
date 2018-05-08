@@ -9,7 +9,7 @@
 #include <common/ast/ProgramNode.hpp>
 #include <string>
 
-namespace rasph::common::program::nodes {
+namespace rasph::common::ast::nodes {
     class ClassMemberNode : public ProgramNode {
     public:
         ClassMemberNode(const std::string &name);
