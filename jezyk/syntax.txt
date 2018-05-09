@@ -8,29 +8,29 @@ class_def = "class" ident "{" members "}"
 members = empty | {member}
 member = eventDec | method_decl | varDecl
 
-method_decl = "func" ident "(" params ")" method_body
+method_decl = "func" ident "(" method_def_params ")" method_body
 mehtod_body = "{" statements ["return" assignable] "}"
 varDecl = "var" ident
 eventDec = event ident
 
+method_def_params = empty | ident {"," ident}
 params = [assignable {"," assignable} ]
 
 block = "{" statements "}"
 
 statements = {if_statement  | assign_statement | method_call
                             | block | handle_statement | every_statement
-                            | for_statement | var_def_statement }
+                            | for_statement }
 
 
 
 if_statement = "if" condition block ["else" block]
 for_statement = "for" ident "in" assignable block
 assign_statement = ident assign_operator assignable
-handle_statement = "handle" object_member "with" (object_member | lambda_def)
-every_statement = "every" period block
-var_def_statement = assign_statement
+#handle_statement = "handle" object_member "with" (object_member | lambda_def)
+#every_statement = "every" period block
 
-lambda_def = "(" params ")" "->" block
+#lambda_def = "(" method_def_params ")" "->" block
 
 
 assignable = method_call | object_member | expression | variable
@@ -51,8 +51,8 @@ relational_condition = primary_condition [relation_operator primary_condition]
 primary_cond = [unary_operator] (parentheses_condition | assignable | bool_const)
 parentheses_condition = "(" condition ")"
 
-period = {period} natural_number time_specifier
-time_specifier = "m" | "w" | "d" | "h" | "min" | "sec" | "ms"
+#period = {period} natural_number time_specifier
+#time_specifier = "m" | "w" | "d" | "h" | "min" | "sec" | "ms"
 
 unary_operator = "!"
 assign_operator = "="
