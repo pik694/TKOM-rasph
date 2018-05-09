@@ -38,6 +38,14 @@ node_ptr_t Parser::tryParse<nodes::IfStatementNode>();
 template<>
 node_ptr_t Parser::tryParse<nodes::ConditionNode>();
 
+template <>
+node_ptr_t Parser::tryParse<nodes::ExpressionNode>();
+
+template<>
+node_ptr_t Parser::tryParse<nodes::LiteralNode>();
+
+template<>
+node_ptr_t Parser::tryParse<nodes::VariableAssignableNode>();
 
 /// PARSING METHODS
 
@@ -45,14 +53,73 @@ template<typename ... Args>
 rasph::parser::node_ptr_t rasph::parser::Parser::tryParse() {
     return NodesFactory<Args...>(*this)();
 }
-
 template<>
 rasph::parser::node_ptr_t rasph::parser::Parser::tryParse<>() {
     return nullptr;
 }
 
+template <>
+node_ptr_t Parser::tryParse<nodes::PrimaryExpressionNode>() {
+
+    std::unique_ptr<nodes::AssignableNode> node;
+
+    if (Acceptor<TokenType::PARENTHESIS_LEFT>(*this)()) {
+
+        node = cast<nodes::AssignableNode>(tryParse<nodes::ExpressionNode>());
+
+        AcceptorErr<TokenType::PARENTHESIS_RIGHT>(*this)();
+
+    }
+    else node = cast<nodes::AssignableNode>(tryParse<nodes::LiteralNode, nodes::VariableAssignableNode>());
+
+    return node ? node_ptr_t(new nodes::PrimaryExpressionNode(std::move(node))) : nullptr;
+}
+
+template <>
+node_ptr_t Parser::tryParse<nodes::MultiplicativeExpressionNode>() {
+    auto node = tryParse < nodes::PrimaryExpressionNode > ();
+    if (!node) return nullptr;
+
+    auto expression = new nodes::MultiplicativeExpressionNode(cast<nodes::PrimaryExpressionNode>(std::move(node)));
+
+    auto acceptor = Acceptor<TokenType::DIVIDE, TokenType::MULTIPLY>(*this);
+    std::shared_ptr<Token> token;
+    while ((token = acceptor())) {
+        expression->addExpression(token->getType(), cast<nodes::PrimaryExpressionNode>(tryParse < nodes::PrimaryExpressionNode> ()));
+    }
+
+    return node_ptr_t(expression);
+}
+
+template <>
+node_ptr_t Parser::tryParse<nodes::ExpressionNode>() {
+
+    auto node = tryParse < nodes::MultiplicativeExpressionNode > ();
+    if (!node) return nullptr;
+
+    auto expression = new nodes::ExpressionNode(cast<nodes::MultiplicativeExpressionNode>(std::move(node)));
+
+    auto acceptor = Acceptor<TokenType::PLUS, TokenType::MINUS>(*this);
+    std::shared_ptr<Token> token;
+    while ((token = acceptor())) {
+        expression->addExpression(token->getType(), cast<nodes::MultiplicativeExpressionNode>(tryParse < nodes::MultiplicativeExpressionNode> ()));
+    }
+
+    return node_ptr_t(expression);
+}
+
 template<>
-node_ptr_t Parser::tryParse<nodes::StatementNode>() {
+node_ptr_t Parser::tryParse<nodes::LiteralNode>() {
+    auto token = Acceptor<TokenType::TEXT_LITERAL, TokenType::NUM_LITERAL, TokenType::FALSE, TokenType::TRUE>(*this)();
+    if (!token) return nullptr;
+
+    return node_ptr_t(new nodes::LiteralNode(*token));
+}
+
+template<>
+node_ptr_t Parser::tryParse<nodes::StatementNode>()  {
+    //TODO : method call
+
     return tryParse < nodes::BlockNode, nodes::ForStatementNode, nodes::IfStatementNode, nodes::AssignStatementNode >
                                                                                          ();
 }
@@ -364,7 +431,9 @@ node_ptr_t Parser::tryParse<nodes::MethodMemberNode>() {
     tmpToken = peekToken();
     if (tmpToken->getType() == TokenType::RETURN) {
         popTokens();
-        //TODO assignable
+
+        method->setReturnStatement(cast<nodes::AssignableNode>(tryParse<nodes::AssignableNode>()));
+
     } else unpeekTokens();
 
     tmpToken = peekToken();
@@ -377,18 +446,20 @@ node_ptr_t Parser::tryParse<nodes::MethodMemberNode>() {
 }
 
 template<>
-node_ptr_t Parser::tryParse<nodes::IdentAssignableNode>() {
+node_ptr_t Parser::tryParse<nodes::VariableAssignableNode>() {
 
+
+    //TODO : object member
     auto token = Acceptor<TokenType::IDENTIFIER>(*this)();
     if (!token) return nullptr;
 
-    return node_ptr_t(new nodes::IdentAssignableNode(token->getTextValue()));
+    return node_ptr_t(new nodes::VariableAssignableNode(token->getTextValue()));
 
 }
 
 template<>
 node_ptr_t Parser::tryParse<nodes::AssignableNode>() {
-    return tryParse < nodes::IdentAssignableNode > ();
+    return tryParse < nodes::ExpressionNode> ();
 }
 
 
@@ -403,6 +474,10 @@ std::shared_ptr<rasph::common::ast::ProgramTree> rasph::parser::Parser::parse() 
 
     while ((node = tryParse<nodes::ClassNode, nodes::StatementNode>()))
         programTree->add(std::move(node));
+
+    auto item = peekedTokens_.size();
+    auto size1 = tokensBuffer_.size();
+    auto token = tokensBuffer_.front();
 
     if (!peekedTokens_.empty() || tokensBuffer_.front()->getType() != TokenType::END)
         throw std::runtime_error("Invalid buffers state");

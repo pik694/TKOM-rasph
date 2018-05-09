@@ -11,10 +11,10 @@
 
 namespace rasph::common::ast::nodes {
 
-    class IdentAssignableNode : public AssignableNode {
+    class VariableAssignableNode : public AssignableNode {
     public:
 
-        explicit IdentAssignableNode(const std::string &name) : name_(name) {}
+        explicit VariableAssignableNode(const std::string &name) : name_(name) {}
 
         const std::string &getName() const {
             return name_;

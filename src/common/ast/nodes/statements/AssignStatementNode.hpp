@@ -6,7 +6,7 @@
 #define RASPH_ASSIGNSTATEMENTNODE_HPP
 
 #include <common/ast/nodes/assignables/AssignableNode.hpp>
-#include <common/ast/nodes/assignables/IdentAssignableNode.hpp>
+#include <common/ast/nodes/assignables/VariableAssignableNode.hpp>
 #include "StatementNode.hpp"
 
 namespace rasph::common::ast::nodes {

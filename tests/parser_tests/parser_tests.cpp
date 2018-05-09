@@ -91,7 +91,7 @@ BOOST_AUTO_TEST_SUITE(parser_tests)
 
     BOOST_AUTO_TEST_CASE(parse_class_with_method_with_parametrs) {
 
-        std::string sample_code = "class aClass { func aFunc (a,b,c){} \n var aVar \n event anEvent }";
+        std::string sample_code = "class aClass { func aFunc (a,b,c){ return a } \n var aVar \n event anEvent }";
 
         std::unique_ptr<Lexer> lexer = std::make_unique<Lexer>(
                 std::make_unique<std::stringstream>(sample_code)
@@ -193,7 +193,7 @@ BOOST_AUTO_TEST_SUITE(parser_tests)
 
     BOOST_AUTO_TEST_CASE(parse_simple_if_statement) {
 
-        std::string sample_code = "if a == c { a =  b }";
+        std::string sample_code = "if !(a == c or a != b) and a > b { a =  b }";
 
         std::unique_ptr<Lexer> lexer = std::make_unique<Lexer>(
                 std::make_unique<std::stringstream>(sample_code)
@@ -205,6 +205,40 @@ BOOST_AUTO_TEST_SUITE(parser_tests)
 
         void * ptr;
         BOOST_CHECK_NO_THROW(ptr = dynamic_cast<nodes::IfStatementNode *>(tree->getNodes().at(0).get()));
+
+    }
+
+    BOOST_AUTO_TEST_CASE(parse_simple_add_statement) {
+
+        std::string sample_code = "a = b + c - ab";
+
+        std::unique_ptr<Lexer> lexer = std::make_unique<Lexer>(
+                std::make_unique<std::stringstream>(sample_code)
+        );
+
+        Parser parser(std::move(lexer));
+
+        auto tree = parser.parse();
+
+        void * ptr;
+        BOOST_CHECK_NO_THROW(ptr = dynamic_cast<nodes::ExpressionNode *>(tree->getNodes().at(0).get()));
+
+    }
+
+    BOOST_AUTO_TEST_CASE(parse_assign_literal) {
+
+        std::string sample_code = "a = 12";
+
+        std::unique_ptr<Lexer> lexer = std::make_unique<Lexer>(
+                std::make_unique<std::stringstream>(sample_code)
+        );
+
+        Parser parser(std::move(lexer));
+
+        auto tree = parser.parse();
+
+        void * ptr;
+        BOOST_CHECK_NO_THROW(ptr = dynamic_cast<nodes::StatementNode *>(tree->getNodes().at(0).get()));
 
     }
 

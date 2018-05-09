@@ -45,6 +45,9 @@ namespace rasph::parser {
                 throw std::invalid_argument("Expected not null");
 
             auto result = std::unique_ptr<T>(dynamic_cast<T*>(node.get()));
+
+            if (!result) throw std::bad_cast();
+
             node.release();
             return std::move(result);
         }

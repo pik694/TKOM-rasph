@@ -19,7 +19,8 @@
 #include "nodes/statements/BlockNode.hpp"
 
 #include "nodes/assignables/AssignableNode.hpp"
-#include "nodes/assignables/IdentAssignableNode.hpp"
+#include "nodes/assignables/VariableAssignableNode.hpp"
+#include "nodes/assignables/LiteralNode.hpp"
 
 #include "nodes/conditions/ConditionNode.hpp"
 #include "nodes/conditions/AndConditionNode.hpp"
@@ -27,5 +28,9 @@
 #include "nodes/conditions/RelationalConditionNode.hpp"
 #include "nodes/conditions/PrimaryConditionNode.hpp"
 #include "common/ast/nodes/conditions/ParenthesesConditionNode.hpp"
+
+#include "nodes/expressions/ExpressionNode.hpp"
+#include "nodes/expressions/MultiplicativeExpressionNode.hpp"
+#include "nodes/expressions/PrimaryExpressionNode.hpp"
 
 #endif //RASPH_NODES_HPP

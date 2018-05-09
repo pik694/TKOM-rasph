@@ -10,6 +10,7 @@
 #include "ClassMemberNode.hpp"
 #include <algorithm>
 #include <common/ast/nodes/statements/StatementNode.hpp>
+#include <common/ast/nodes/assignables/AssignableNode.hpp>
 
 namespace rasph::common::ast::nodes {
     class MethodMemberNode : public ClassMemberNode {
@@ -35,13 +36,20 @@ namespace rasph::common::ast::nodes {
             statements_.push_back(std::move(statement));
         }
 
+        void setReturnStatement(std::unique_ptr<nodes::AssignableNode> result){
+            result_ = std::move(result);
+        }
+
         const std::list<std::unique_ptr<nodes::StatementNode>> &getStatements() const {
             return statements_;
         }
 
+
+
     private:
         std::vector<const std::string> parameters_;
         std::list<std::unique_ptr<nodes::StatementNode>> statements_;
+        std::unique_ptr<nodes::AssignableNode> result_;
 
     };
 }
