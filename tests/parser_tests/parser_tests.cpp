@@ -8,10 +8,7 @@
 #include <boost/test/unit_test.hpp>
 #include <lexer/Lexer.h>
 #include <parser/Parser.hpp>
-#include <common/ast/nodes/class_definition/ClassNode.hpp>
-#include <common/ast/nodes/statements/StatementNode.hpp>
-#include <common/ast/nodes/statements/BlockNode.hpp>
-#include <common/ast/nodes/statements/ForStatementNode.hpp>
+#include <common/ast/nodes.hpp>
 
 using namespace rasph::lexer;
 using namespace rasph::common::tokens;
@@ -136,7 +133,8 @@ BOOST_AUTO_TEST_SUITE(parser_tests)
         Parser parser(std::move(lexer));
 
         auto tree = parser.parse();
-        BOOST_CHECK_NO_THROW(dynamic_cast<nodes::BlockNode *>(tree->getNodes().at(0).get()));
+        void* ptr;
+        BOOST_CHECK_NO_THROW(ptr = dynamic_cast<nodes::BlockNode *>(tree->getNodes().at(0).get()));
 
 
     }
@@ -159,7 +157,7 @@ BOOST_AUTO_TEST_SUITE(parser_tests)
 
     }
 
-    BOOST_AUTO_TEST_CASE(parse_for_node) {
+    BOOST_AUTO_TEST_CASE(parse_for_statement) {
 
         std::string sample_code = "for i in Range {}";
 
@@ -175,6 +173,40 @@ BOOST_AUTO_TEST_SUITE(parser_tests)
 
     }
 
+    BOOST_AUTO_TEST_CASE(parse_assign_statement) {
+
+        std::string sample_code = "a = b";
+
+        std::unique_ptr<Lexer> lexer = std::make_unique<Lexer>(
+                std::make_unique<std::stringstream>(sample_code)
+        );
+
+        Parser parser(std::move(lexer));
+
+        auto tree = parser.parse();
+        nodes::AssignStatementNode * ptr;
+
+        BOOST_CHECK_NO_THROW(ptr = dynamic_cast<nodes::AssignStatementNode *>(tree->getNodes().at(0).get()));
+
+    }
+
+
+    BOOST_AUTO_TEST_CASE(parse_simple_if_statement) {
+
+        std::string sample_code = "if a == c { a =  b }";
+
+        std::unique_ptr<Lexer> lexer = std::make_unique<Lexer>(
+                std::make_unique<std::stringstream>(sample_code)
+        );
+
+        Parser parser(std::move(lexer));
+
+        auto tree = parser.parse();
+
+        void * ptr;
+        BOOST_CHECK_NO_THROW(ptr = dynamic_cast<nodes::IfStatementNode *>(tree->getNodes().at(0).get()));
+
+    }
 
 
 

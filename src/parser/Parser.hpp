@@ -41,7 +41,8 @@ namespace rasph::parser {
         template<typename T>
         std::unique_ptr<T> cast(node_ptr_t node){
 
-            if(!node) throw std::invalid_argument("Expected not null");
+            if(!node)
+                throw std::invalid_argument("Expected not null");
 
             auto result = std::unique_ptr<T>(dynamic_cast<T*>(node.get()));
             node.release();
