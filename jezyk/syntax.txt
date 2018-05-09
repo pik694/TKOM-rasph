@@ -33,7 +33,7 @@ assign_statement = ident assign_operator assignable
 #lambda_def = "(" method_def_params ")" "->" block
 
 
-assignable = method_call | object_member | expression | variable | ident
+assignable = method_call | object_member | expression | variable | literal
 
 method_call = [object_member "."] ident "(" params ")"
 object_member = {(method_call | ident) "."}  ident
@@ -41,14 +41,14 @@ object_member = {(method_call | ident) "."}  ident
 
 expression = multiplicative_expression { additive_operator multiplicative_expression }
 multiplicative_expression = primary_expr {multiplicative_operator primary_expression }
-primary_expression = (literal | variable | parentheses_expr | object_member)
+primary_expression = (literal | variable | parentheses_expr )
 parentheses_expr = "(" expression ")"
 
 condition = and_condition {or_operator and_condition}
 and_condition = equality_condition {and_operator equality_condition}
 equality_condition = relational_condition [equal_operator relational_condition]
 relational_condition = primary_condition [relation_operator primary_condition]
-primary_cond = [unary_operator] (parentheses_condition | assignable | bool_const)
+primary_cond = [unary_operator] (parentheses_condition | assignable )
 parentheses_condition = "(" condition ")"
 
 #period = {period} natural_number time_specifier
@@ -63,7 +63,7 @@ relation_operator = "<" | "<=" | "=>" | ">"
 additive_operator = "+" | "-"
 multiplicative_operator = "*" | "/"
 
-literal = number_literal | text_literal
+literal = number_literal | text_literal | bool_literal
 variable = ident | object_member
  
 number_literal = ["-"] (natural_number | double_number)
