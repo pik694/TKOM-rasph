@@ -7,6 +7,7 @@
 
 #include "tokens.h"
 #include <iostream>
+#include <boost/optional.hpp>
 
 namespace rasph::common::tokens {
 

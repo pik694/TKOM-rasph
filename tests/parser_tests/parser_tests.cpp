@@ -11,6 +11,7 @@
 #include <common/ast/nodes/class_definition/ClassNode.hpp>
 #include <common/ast/nodes/statements/StatementNode.hpp>
 #include <common/ast/nodes/statements/BlockNode.hpp>
+#include <common/ast/nodes/statements/ForStatementNode.hpp>
 
 using namespace rasph::lexer;
 using namespace rasph::common::tokens;
@@ -21,7 +22,7 @@ BOOST_AUTO_TEST_SUITE(parser_tests)
 
 
     BOOST_AUTO_TEST_CASE(parse_variable) {
-        std::string sample_code = "1123";
+        std::string sample_code = " ";
 
         std::unique_ptr<Lexer> lexer = std::make_unique<Lexer>(
                 std::make_unique<std::stringstream>(sample_code)
@@ -31,7 +32,7 @@ BOOST_AUTO_TEST_SUITE(parser_tests)
 
         std::shared_ptr<ProgramTree> tree;
 
-        BOOST_CHECK_NO_THROW(tree = parser.parse());
+        BOOST_REQUIRE_NO_THROW(tree = parser.parse());
         BOOST_CHECK_EQUAL(tree->isEmpty(), true);
 
     }
@@ -142,7 +143,7 @@ BOOST_AUTO_TEST_SUITE(parser_tests)
 
     BOOST_AUTO_TEST_CASE(parse_nested_empty_block) {
 
-        std::string sample_code = "{ { } }";
+        std::string sample_code = "{ { for i in abc {} } }";
 
         std::unique_ptr<Lexer> lexer = std::make_unique<Lexer>(
                 std::make_unique<std::stringstream>(sample_code)
@@ -155,6 +156,22 @@ BOOST_AUTO_TEST_SUITE(parser_tests)
 
         BOOST_CHECK_EQUAL(node->getStatements().size(), 1);
 
+
+    }
+
+    BOOST_AUTO_TEST_CASE(parse_for_node) {
+
+        std::string sample_code = "for i in Range {}";
+
+        std::unique_ptr<Lexer> lexer = std::make_unique<Lexer>(
+                std::make_unique<std::stringstream>(sample_code)
+        );
+
+        Parser parser(std::move(lexer));
+
+        auto tree = parser.parse();
+        nodes::ForStatementNode * ptr;
+        BOOST_CHECK_NO_THROW(ptr = dynamic_cast<nodes::ForStatementNode *>(tree->getNodes().at(0).get()));
 
     }
 

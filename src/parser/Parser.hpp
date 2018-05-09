@@ -11,10 +11,12 @@
 #include <common/ast/ProgramTree.hpp>
 #include <common/ast/ProgramNode.hpp>
 #include <stack>
+#include <common/tokens/tokens.h>
 
 namespace rasph::parser {
 
     using node_ptr_t = std::unique_ptr<rasph::common::ast::ProgramNode>;
+    using token_ptr = std::shared_ptr<rasph::common::tokens::Token>;
 
     class Parser {
     public:
@@ -32,11 +34,27 @@ namespace rasph::parser {
         friend
         class NodesFactory;
 
+        template<bool error, common::tokens::TokenType ... types>
+        friend
+        class TokenTypesAcceptor;
+
+        template<typename T>
+        std::unique_ptr<T> cast(node_ptr_t node){
+
+            if(!node) throw std::invalid_argument("Expected not null");
+
+            auto result = std::unique_ptr<T>(dynamic_cast<T*>(node.get()));
+            node.release();
+            return std::move(result);
+        }
+
         std::shared_ptr<rasph::common::tokens::Token> peekToken();
+
         void unpeekTokens(size_t count = 1);
+
         void popTokens(size_t count = 1);
 
-        template <typename ... Args>
+        template<typename ... Args>
         node_ptr_t tryParse();
 
 

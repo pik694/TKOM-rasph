@@ -2,24 +2,36 @@
 // Created by Piotr Żelazko on 06.05.2018.
 //
 
-#include "common/ast/nodes/class_definition/ClassNode.hpp"
-#include "common/ast/nodes/class_definition/members/MethodMemberNode.hpp"
-#include "common/ast/nodes/class_definition/members/EventMemberNode.hpp"
-#include "common/ast/nodes/class_definition/members/AttributeMemberNode.hpp"
-#include "common/ast/nodes/statements/StatementNode.hpp"
-#include "common/ast/nodes/statements/BlockNode.hpp"
+#include <common/ast/nodes.hpp>
 
 #include "NodesFactory.hpp"
+#include "TokenTypesAcceptor.hpp"
+
+
 
 using namespace rasph::common::ast;
 using namespace rasph::common::tokens;
-using namespace rasph::common::ast::nodes;
 using namespace rasph::parser;
+
+template<TokenType ... types>
+using Acceptor = TokenTypesAcceptor<false, types ...  >;
+
+template<TokenType ... types>
+using AcceptorErr = TokenTypesAcceptor<true, types ...  >;
+
+
+
 
 
 /// Specializations' declarations
 template<>
 node_ptr_t Parser::tryParse<nodes::BlockNode>();
+
+template <>
+node_ptr_t Parser::tryParse<nodes::ForStatementNode>();
+
+template <>
+node_ptr_t Parser::tryParse<nodes::AssignableNode>();
 
 /// PARSING METHODS
 
@@ -35,36 +47,46 @@ rasph::parser::node_ptr_t rasph::parser::Parser::tryParse<>() {
 
 template<>
 node_ptr_t Parser::tryParse<nodes::StatementNode>() {
-    return tryParse<nodes::BlockNode>();
+    return tryParse<nodes::BlockNode, nodes::ForStatementNode>();
 }
 
 template<>
 node_ptr_t Parser::tryParse<nodes::BlockNode>() {
-    auto tmpToken = peekToken();
-    if (tmpToken->getType() != TokenType::CBRACKET_LEFT){
-        unpeekTokens();
-        return nullptr;
-    }
+
+    auto tmpToken = Acceptor<TokenType::CBRACKET_LEFT>(*this)();
+    if (!tmpToken) return nullptr;
 
     auto block = new nodes::BlockNode ();
 
     node_ptr_t node;
     while ((node = tryParse<nodes::StatementNode>())){
-        auto statement = std::unique_ptr<nodes::StatementNode>(dynamic_cast<nodes::StatementNode *>(node.get()));
-        if (!statement) throw std::bad_cast();
-        node.release();
-
+        auto statement = cast<nodes::StatementNode>(std::move(node));
         block->addStatement(std::move(statement));
     }
 
-    tmpToken = peekToken();
-    if (tmpToken->getType() != TokenType::CBRACKET_RIGHT)
-        throw std::invalid_argument("Expected }");
-
-    popTokens(2);
+    AcceptorErr<TokenType::CBRACKET_RIGHT>(*this)();
 
     return node_ptr_t(block);
 }
+
+template <>
+node_ptr_t Parser::tryParse<nodes::ForStatementNode>() {
+
+    auto tmpToken = Acceptor<TokenType::FOR>(*this)();
+    if(!tmpToken) return nullptr;
+
+    tmpToken = AcceptorErr<TokenType::IDENTIFIER>(*this)();
+    std::string iterator = tmpToken->getTextValue();
+
+    AcceptorErr<TokenType::IN>(*this)();
+
+    auto assignable = cast<nodes::AssignableNode>(tryParse<nodes::AssignableNode>());
+
+    auto block = cast<nodes::BlockNode>(std::move(tryParse<nodes::BlockNode>()));
+
+    return node_ptr_t(new nodes::ForStatementNode(iterator, std::move(assignable), std::move(block)));
+}
+
 
 template<>
 rasph::parser::node_ptr_t rasph::parser::Parser::tryParse<nodes::ClassNode>() {
@@ -112,7 +134,6 @@ rasph::parser::node_ptr_t rasph::parser::Parser::tryParse<nodes::ClassNode>() {
     return std::unique_ptr<ProgramNode>(classNode);
 
 }
-
 
 template<>
 node_ptr_t Parser::tryParse<nodes::EventMemberNode>() {
@@ -228,6 +249,20 @@ node_ptr_t Parser::tryParse<nodes::MethodMemberNode>() {
     return std::unique_ptr<ProgramNode>(method);
 }
 
+template <>
+node_ptr_t Parser::tryParse<nodes::IdentAssignableNode>(){
+
+    auto token = Acceptor<TokenType::IDENTIFIER>(*this)();
+    if (!token) return nullptr;
+
+    return node_ptr_t(new nodes::IdentAssignableNode(token->getTextValue()));
+
+}
+
+template <>
+node_ptr_t Parser::tryParse<nodes::AssignableNode>(){
+    return tryParse<nodes::IdentAssignableNode>();
+}
 
 
 /// OTHER MEMBERS
@@ -239,9 +274,11 @@ std::shared_ptr<rasph::common::ast::ProgramTree> rasph::parser::Parser::parse() 
 
     node_ptr_t node;
 
-    while ((node = tryParse<ClassNode, nodes::StatementNode>()))
+    while ((node = tryParse<nodes::ClassNode, nodes::StatementNode>()))
         programTree->add(std::move(node));
 
+    if (!peekedTokens_.empty() || tokensBuffer_.front()->getType() != TokenType::END)
+        throw std::runtime_error("Invalid buffers state");
 
     return programTree;
 
