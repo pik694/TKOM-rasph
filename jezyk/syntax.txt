@@ -33,7 +33,7 @@ assign_statement = ident assign_operator assignable
 #lambda_def = "(" method_def_params ")" "->" block
 
 
-assignable = method_call | object_member | expression | variable
+assignable = method_call | object_member | expression | variable | ident
 
 method_call = [object_member "."] ident "(" params ")"
 object_member = {(method_call | ident) "."}  ident
