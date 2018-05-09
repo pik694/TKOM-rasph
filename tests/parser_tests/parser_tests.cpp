@@ -227,7 +227,24 @@ BOOST_AUTO_TEST_SUITE(parser_tests)
 
     BOOST_AUTO_TEST_CASE(parse_assign_literal) {
 
-        std::string sample_code = "a = 12";
+        std::string sample_code = "a = 12 * abc + 12 - kotek * ( 12 + 6 )";
+
+        std::unique_ptr<Lexer> lexer = std::make_unique<Lexer>(
+                std::make_unique<std::stringstream>(sample_code)
+        );
+
+        Parser parser(std::move(lexer));
+
+        auto tree = parser.parse();
+
+        void * ptr;
+        BOOST_CHECK_NO_THROW(ptr = dynamic_cast<nodes::StatementNode *>(tree->getNodes().at(0).get()));
+
+    }
+
+    BOOST_AUTO_TEST_CASE(parse_class_member_call) {
+
+        std::string sample_code = " a.b() \n a.b \n a.b(12, ab.cd())";
 
         std::unique_ptr<Lexer> lexer = std::make_unique<Lexer>(
                 std::make_unique<std::stringstream>(sample_code)

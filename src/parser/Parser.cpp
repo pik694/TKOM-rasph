@@ -38,7 +38,7 @@ node_ptr_t Parser::tryParse<nodes::IfStatementNode>();
 template<>
 node_ptr_t Parser::tryParse<nodes::ConditionNode>();
 
-template <>
+template<>
 node_ptr_t Parser::tryParse<nodes::ExpressionNode>();
 
 template<>
@@ -53,29 +53,71 @@ template<typename ... Args>
 rasph::parser::node_ptr_t rasph::parser::Parser::tryParse() {
     return NodesFactory<Args...>(*this)();
 }
+
 template<>
 rasph::parser::node_ptr_t rasph::parser::Parser::tryParse<>() {
     return nullptr;
 }
 
-template <>
-node_ptr_t Parser::tryParse<nodes::PrimaryExpressionNode>() {
+template<>
+node_ptr_t Parser::tryParse<nodes::ClassMemberCall>() {
 
-    std::unique_ptr<nodes::AssignableNode> node;
+    auto ident = Acceptor<TokenType::IDENTIFIER>(*this)();
+    if (!ident) return nullptr;
+
+    if (!Acceptor<TokenType::DOT>(*this)()) {
+        tokensBuffer_.push_front(ident);
+        return nullptr;
+    }
+
+    auto memberName = AcceptorErr<TokenType::IDENTIFIER>(*this)();
 
     if (Acceptor<TokenType::PARENTHESIS_LEFT>(*this)()) {
 
-        node = cast<nodes::AssignableNode>(tryParse<nodes::ExpressionNode>());
+        auto methodCall = new nodes::MethodCall(ident->getTextValue(), memberName->getTextValue());
+
+        node_ptr_t node = tryParse < nodes::AssignableNode > ();
+
+        if (node) {
+            auto param = cast<nodes::AssignableNode>(std::move(node));
+            methodCall->addParameter(std::move(param));
+
+            while (Acceptor<TokenType::COMMA>(*this)()) {
+                param = cast<nodes::AssignableNode>(tryParse < nodes::AssignableNode > ());
+                methodCall->addParameter(std::move(param));
+            }
+        }
+        AcceptorErr<TokenType::PARENTHESIS_RIGHT>(*this)();
+
+        return node_ptr_t(methodCall);
+    }
+
+    return node_ptr_t(new nodes::ClassMemberCall(ident->getTextValue(), memberName->getTextValue()));
+}
+
+template<>
+node_ptr_t Parser::tryParse<nodes::PrimaryExpressionNode>() {
+
+    std::unique_ptr<nodes::AssignableNode> node;
+    node_ptr_t tmp_node;
+
+    if (Acceptor<TokenType::PARENTHESIS_LEFT>(*this)()) {
+
+        node = cast<nodes::AssignableNode>(tryParse < nodes::ExpressionNode > ());
 
         AcceptorErr<TokenType::PARENTHESIS_RIGHT>(*this)();
 
+    } else {
+
+        tmp_node = tryParse < nodes::ClassMemberCall, nodes::LiteralNode, nodes::VariableAssignableNode > ();
+
+        if (tmp_node) node = cast<nodes::AssignableNode>(std::move(tmp_node));
     }
-    else node = cast<nodes::AssignableNode>(tryParse<nodes::LiteralNode, nodes::VariableAssignableNode>());
 
     return node ? node_ptr_t(new nodes::PrimaryExpressionNode(std::move(node))) : nullptr;
 }
 
-template <>
+template<>
 node_ptr_t Parser::tryParse<nodes::MultiplicativeExpressionNode>() {
     auto node = tryParse < nodes::PrimaryExpressionNode > ();
     if (!node) return nullptr;
@@ -85,13 +127,14 @@ node_ptr_t Parser::tryParse<nodes::MultiplicativeExpressionNode>() {
     auto acceptor = Acceptor<TokenType::DIVIDE, TokenType::MULTIPLY>(*this);
     std::shared_ptr<Token> token;
     while ((token = acceptor())) {
-        expression->addExpression(token->getType(), cast<nodes::PrimaryExpressionNode>(tryParse < nodes::PrimaryExpressionNode> ()));
+        expression->addExpression(token->getType(),
+                                  cast<nodes::PrimaryExpressionNode>(tryParse < nodes::PrimaryExpressionNode > ()));
     }
 
     return node_ptr_t(expression);
 }
 
-template <>
+template<>
 node_ptr_t Parser::tryParse<nodes::ExpressionNode>() {
 
     auto node = tryParse < nodes::MultiplicativeExpressionNode > ();
@@ -102,7 +145,8 @@ node_ptr_t Parser::tryParse<nodes::ExpressionNode>() {
     auto acceptor = Acceptor<TokenType::PLUS, TokenType::MINUS>(*this);
     std::shared_ptr<Token> token;
     while ((token = acceptor())) {
-        expression->addExpression(token->getType(), cast<nodes::MultiplicativeExpressionNode>(tryParse < nodes::MultiplicativeExpressionNode> ()));
+        expression->addExpression(token->getType(), cast<nodes::MultiplicativeExpressionNode>(
+                tryParse < nodes::MultiplicativeExpressionNode > ()));
     }
 
     return node_ptr_t(expression);
@@ -117,11 +161,12 @@ node_ptr_t Parser::tryParse<nodes::LiteralNode>() {
 }
 
 template<>
-node_ptr_t Parser::tryParse<nodes::StatementNode>()  {
+node_ptr_t Parser::tryParse<nodes::StatementNode>() {
     //TODO : method call
 
-    return tryParse < nodes::BlockNode, nodes::ForStatementNode, nodes::IfStatementNode, nodes::AssignStatementNode >
-                                                                                         ();
+    return tryParse < nodes::ClassMemberCall, nodes::BlockNode, nodes::ForStatementNode, nodes::IfStatementNode,
+            nodes::AssignStatementNode >
+            ();
 }
 
 template<>
@@ -176,55 +221,56 @@ node_ptr_t Parser::tryParse<nodes::AssignStatementNode>() {
     return node_ptr_t(new nodes::AssignStatementNode(ident, std::move(node)));
 }
 
-template <>
+template<>
 node_ptr_t Parser::tryParse<nodes::PrimaryConditionNode>() {
 
     bool inverted = false;
 
     auto unary = Acceptor<TokenType::NOT>(*this)();
-    if(unary) inverted = true;
+    if (unary) inverted = true;
 
     std::unique_ptr<nodes::AssignableNode> node;
 
-    if(Acceptor<TokenType::PARENTHESIS_LEFT>(*this)()){
+    if (Acceptor<TokenType::PARENTHESIS_LEFT>(*this)()) {
 
-        node = cast<nodes::AssignableNode>(tryParse<nodes::ConditionNode>());
+        node = cast<nodes::AssignableNode>(tryParse < nodes::ConditionNode > ());
         AcceptorErr<TokenType::PARENTHESIS_RIGHT>(*this)();
 
-    }
-    else{
-        node = cast<nodes::AssignableNode>(tryParse<nodes::AssignableNode>());
+    } else {
+        node = cast<nodes::AssignableNode>(tryParse < nodes::AssignableNode > ());
     }
 
     return node_ptr_t(new nodes::PrimaryConditionNode(inverted, std::move(node)));
 }
 
-template <>
-node_ptr_t Parser::tryParse<nodes::RelationalConditionNode>(){
-    auto node = tryParse<nodes::PrimaryConditionNode>();
+template<>
+node_ptr_t Parser::tryParse<nodes::RelationalConditionNode>() {
+    auto node = tryParse < nodes::PrimaryConditionNode > ();
     if (!node) return nullptr;
 
     auto condition = new nodes::RelationalConditionNode(cast<nodes::PrimaryConditionNode>(std::move(node)));
 
     auto token = Acceptor<TokenType::GEQUAL, TokenType::LEQUAL, TokenType::LESS, TokenType::GREATER>(*this)();
-    if (token){
-        condition->addCondition(token->getType(), cast<nodes::PrimaryConditionNode>(tryParse<nodes::PrimaryConditionNode>()));
+    if (token) {
+        condition->addCondition(token->getType(),
+                                cast<nodes::PrimaryConditionNode>(tryParse < nodes::PrimaryConditionNode > ()));
     }
 
     return node_ptr_t(condition);
 }
 
-template <>
+template<>
 node_ptr_t Parser::tryParse<nodes::EqualityConditionNode>() {
 
-    auto node = tryParse<nodes::RelationalConditionNode>();
+    auto node = tryParse < nodes::RelationalConditionNode > ();
     if (!node) return nullptr;
 
     auto condition = new nodes::EqualityConditionNode(cast<nodes::RelationalConditionNode>(std::move(node)));
 
     auto token = Acceptor<TokenType::EQUAL, TokenType::NEQUAL>(*this)();
-    if (token){
-        condition->addCondition(token->getType(), cast<nodes::RelationalConditionNode>(tryParse<nodes::RelationalConditionNode>()));
+    if (token) {
+        condition->addCondition(token->getType(),
+                                cast<nodes::RelationalConditionNode>(tryParse < nodes::RelationalConditionNode > ()));
     }
 
     return node_ptr_t(condition);
@@ -234,14 +280,14 @@ node_ptr_t Parser::tryParse<nodes::EqualityConditionNode>() {
 template<>
 node_ptr_t Parser::tryParse<nodes::AndConditionNode>() {
 
-    auto node = tryParse<nodes::EqualityConditionNode>();
+    auto node = tryParse < nodes::EqualityConditionNode > ();
     if (!node) return nullptr;
 
     auto condition = new nodes::AndConditionNode(cast<nodes::EqualityConditionNode>(std::move(node)));
 
     auto acceptor = Acceptor<TokenType::AND>(*this);
-    while (acceptor()){
-        condition->addCondition(cast<nodes::EqualityConditionNode>(tryParse<nodes::EqualityConditionNode>()));
+    while (acceptor()) {
+        condition->addCondition(cast<nodes::EqualityConditionNode>(tryParse < nodes::EqualityConditionNode > ()));
     }
 
     return node_ptr_t(condition);
@@ -251,14 +297,14 @@ node_ptr_t Parser::tryParse<nodes::AndConditionNode>() {
 template<>
 node_ptr_t Parser::tryParse<nodes::ConditionNode>() {
 
-    auto node = tryParse<nodes::AndConditionNode>();
+    auto node = tryParse < nodes::AndConditionNode > ();
     if (!node) return nullptr;
 
     auto condition = new nodes::ConditionNode(cast<nodes::AndConditionNode>(std::move(node)));
 
     auto acceptor = Acceptor<TokenType::OR>(*this);
-    while (acceptor()){
-        condition->addCondition(cast<nodes::AndConditionNode>(tryParse<nodes::AndConditionNode>()));
+    while (acceptor()) {
+        condition->addCondition(cast<nodes::AndConditionNode>(tryParse < nodes::AndConditionNode > ()));
     }
 
     return node_ptr_t(condition);
@@ -432,7 +478,7 @@ node_ptr_t Parser::tryParse<nodes::MethodMemberNode>() {
     if (tmpToken->getType() == TokenType::RETURN) {
         popTokens();
 
-        method->setReturnStatement(cast<nodes::AssignableNode>(tryParse<nodes::AssignableNode>()));
+        method->setReturnStatement(cast<nodes::AssignableNode>(tryParse < nodes::AssignableNode > ()));
 
     } else unpeekTokens();
 
@@ -459,7 +505,7 @@ node_ptr_t Parser::tryParse<nodes::VariableAssignableNode>() {
 
 template<>
 node_ptr_t Parser::tryParse<nodes::AssignableNode>() {
-    return tryParse < nodes::ExpressionNode> ();
+    return tryParse < nodes::ExpressionNode > ();
 }
 
 

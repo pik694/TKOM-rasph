@@ -11,6 +11,8 @@
 #include "nodes/class_definition/members/MethodMemberNode.hpp"
 #include "nodes/class_definition/members/EventMemberNode.hpp"
 #include "nodes/class_definition/members/AttributeMemberNode.hpp"
+#include "nodes/class_definition/ClassMemberCall.hpp"
+#include "nodes/class_definition/MethodCall.hpp"
 
 #include "nodes/statements/StatementNode.hpp"
 #include "nodes/statements/IfStatementNode.hpp"
