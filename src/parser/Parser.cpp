@@ -6,6 +6,8 @@
 #include "common/ast/nodes/class_definition/members/MethodMemberNode.hpp"
 #include "common/ast/nodes/class_definition/members/EventMemberNode.hpp"
 #include "common/ast/nodes/class_definition/members/AttributeMemberNode.hpp"
+#include "common/ast/nodes/statements/StatementNode.hpp"
+#include "common/ast/nodes/statements/BlockNode.hpp"
 
 #include "NodesFactory.hpp"
 
@@ -14,6 +16,10 @@ using namespace rasph::common::tokens;
 using namespace rasph::common::ast::nodes;
 using namespace rasph::parser;
 
+
+/// Specializations' declarations
+template<>
+node_ptr_t Parser::tryParse<nodes::BlockNode>();
 
 /// PARSING METHODS
 
@@ -27,6 +33,38 @@ rasph::parser::node_ptr_t rasph::parser::Parser::tryParse<>() {
     return nullptr;
 }
 
+template<>
+node_ptr_t Parser::tryParse<nodes::StatementNode>() {
+    return tryParse<nodes::BlockNode>();
+}
+
+template<>
+node_ptr_t Parser::tryParse<nodes::BlockNode>() {
+    auto tmpToken = peekToken();
+    if (tmpToken->getType() != TokenType::CBRACKET_LEFT){
+        unpeekTokens();
+        return nullptr;
+    }
+
+    auto block = new nodes::BlockNode ();
+
+    node_ptr_t node;
+    while ((node = tryParse<nodes::StatementNode>())){
+        auto statement = std::unique_ptr<nodes::StatementNode>(dynamic_cast<nodes::StatementNode *>(node.get()));
+        if (!statement) throw std::bad_cast();
+        node.release();
+
+        block->addStatement(std::move(statement));
+    }
+
+    tmpToken = peekToken();
+    if (tmpToken->getType() != TokenType::CBRACKET_RIGHT)
+        throw std::invalid_argument("Expected }");
+
+    popTokens(2);
+
+    return node_ptr_t(block);
+}
 
 template<>
 rasph::parser::node_ptr_t rasph::parser::Parser::tryParse<nodes::ClassNode>() {
@@ -97,65 +135,99 @@ node_ptr_t Parser::tryParse<nodes::EventMemberNode>() {
 
 template<>
 node_ptr_t Parser::tryParse<nodes::AttributeMemberNode>() {
-            auto tmpToken = peekToken();
-        if(tmpToken->getType() != TokenType::VAR){
-            unpeekTokens();
-            return nullptr;
-        }
-
-        tmpToken = peekToken();
-        if (tmpToken->getType() != TokenType::IDENTIFIER)
-            throw std::invalid_argument("Could not find variable's identifier");
-
-        popTokens(2);
-
-        return std::unique_ptr<ProgramNode>(new nodes::AttributeMemberNode(tmpToken->getTextValue()));
-
-}
-
-template <>
-node_ptr_t Parser::tryParse<nodes::MethodMemberNode>(){
     auto tmpToken = peekToken();
-        if(tmpToken->getType() != TokenType::FUNC){
-            unpeekTokens();
-            return nullptr;
-        }
+    if (tmpToken->getType() != TokenType::VAR) {
+        unpeekTokens();
+        return nullptr;
+    }
 
-        tmpToken = peekToken();
-        if (tmpToken->getType() != TokenType::IDENTIFIER)
-            throw std::invalid_argument("Could not find functions's identifier");
+    tmpToken = peekToken();
+    if (tmpToken->getType() != TokenType::IDENTIFIER)
+        throw std::invalid_argument("Could not find variable's identifier");
 
-        auto method = new nodes::MethodMemberNode(tmpToken->getTextValue());
+    popTokens(2);
 
-        tmpToken = peekToken();
-        if (tmpToken->getType() != TokenType::PARENTHESIS_LEFT)
-            throw std::invalid_argument("Could not find list of parameters");
+    return std::unique_ptr<ProgramNode>(new nodes::AttributeMemberNode(tmpToken->getTextValue()));
 
-        //TODO : list of parameters
-
-        tmpToken = peekToken();
-        if(tmpToken->getType() != TokenType::PARENTHESIS_RIGHT)
-            throw std::invalid_argument("Could not find list of parameters");
-
-
-        tmpToken = peekToken();
-        if (tmpToken->getType() != TokenType::CBRACKET_LEFT)
-            throw std::invalid_argument("Could not find method body");
-
-        //TODO : statements
-
-        tmpToken = peekToken();
-        if (tmpToken->getType() != TokenType::CBRACKET_RIGHT)
-            throw std::invalid_argument("Could not find method body");
-
-        popTokens(6);
-
-        return std::unique_ptr<ProgramNode>(method);
 }
 
-//node_ptr_t Parser::tryParse<nodes::MethodDefParametersList>() {
-//
-//}
+template<>
+node_ptr_t Parser::tryParse<nodes::MethodMemberNode>() {
+    auto tmpToken = peekToken();
+    if (tmpToken->getType() != TokenType::FUNC) {
+        unpeekTokens();
+        return nullptr;
+    }
+
+    tmpToken = peekToken();
+    if (tmpToken->getType() != TokenType::IDENTIFIER)
+        throw std::invalid_argument("Could not find functions's identifier");
+
+    auto method = new nodes::MethodMemberNode(tmpToken->getTextValue());
+
+    tmpToken = peekToken();
+    if (tmpToken->getType() != TokenType::PARENTHESIS_LEFT)
+        throw std::invalid_argument("Could not find list of parameters");
+
+    tmpToken = peekToken();
+    if (tmpToken->getType() == TokenType::IDENTIFIER) {
+        while (true) {
+
+            method->addParameter(tmpToken->getTextValue());
+            popTokens();
+
+            tmpToken = peekToken();
+            if (tmpToken->getType() != TokenType::COMMA) {
+                unpeekTokens();
+                break;
+            }
+            popTokens();
+
+            tmpToken = peekToken();
+            if (tmpToken->getType() != TokenType::IDENTIFIER) {
+                throw std::invalid_argument("Expected identifier");
+            }
+        }
+    } else {
+        unpeekTokens();
+    }
+
+    tmpToken = peekToken();
+    if (tmpToken->getType() != TokenType::PARENTHESIS_RIGHT)
+        throw std::invalid_argument("Could not find list of parameters");
+
+
+    tmpToken = peekToken();
+    if (tmpToken->getType() != TokenType::CBRACKET_LEFT)
+        throw std::invalid_argument("Could not find method body");
+
+
+    // method body
+    node_ptr_t node;
+    while ((node = tryParse<nodes::StatementNode>())){
+        auto statement = std::unique_ptr<nodes::StatementNode>(dynamic_cast<nodes::StatementNode *>(node.get()));
+        if (!statement) throw std::bad_cast();
+        node.release();
+
+        method->addStatement(std::move(statement));
+
+    }
+
+    tmpToken = peekToken();
+    if(tmpToken->getType() == TokenType::RETURN){
+        popTokens();
+        //TODO assignable
+    } else unpeekTokens();
+
+    tmpToken = peekToken();
+    if (tmpToken->getType() != TokenType::CBRACKET_RIGHT)
+        throw std::invalid_argument("Could not find method body");
+
+    popTokens(6);
+
+    return std::unique_ptr<ProgramNode>(method);
+}
+
 
 
 /// OTHER MEMBERS
@@ -167,8 +239,7 @@ std::shared_ptr<rasph::common::ast::ProgramTree> rasph::parser::Parser::parse() 
 
     node_ptr_t node;
 
-//    while ((node = (NodesFactory<ClassNode>(*this))())) {
-    while ((node = tryParse<ClassNode>()))
+    while ((node = tryParse<ClassNode, nodes::StatementNode>()))
         programTree->add(std::move(node));
 
 

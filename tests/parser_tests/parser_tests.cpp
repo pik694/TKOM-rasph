@@ -9,6 +9,8 @@
 #include <lexer/Lexer.h>
 #include <parser/Parser.hpp>
 #include <common/ast/nodes/class_definition/ClassNode.hpp>
+#include <common/ast/nodes/statements/StatementNode.hpp>
+#include <common/ast/nodes/statements/BlockNode.hpp>
 
 using namespace rasph::lexer;
 using namespace rasph::common::tokens;
@@ -88,6 +90,75 @@ BOOST_AUTO_TEST_SUITE(parser_tests)
         BOOST_CHECK_EQUAL(node->getMembers().size(), 3);
 
     }
+
+    BOOST_AUTO_TEST_CASE(parse_class_with_method_with_parametrs) {
+
+        std::string sample_code = "class aClass { func aFunc (a,b,c){} \n var aVar \n event anEvent }";
+
+        std::unique_ptr<Lexer> lexer = std::make_unique<Lexer>(
+                std::make_unique<std::stringstream>(sample_code)
+        );
+
+        Parser parser(std::move(lexer));
+
+        auto tree = parser.parse();
+
+        auto node = dynamic_cast<nodes::ClassNode *>(tree->getNodes().at(0).get());
+
+        BOOST_CHECK_EQUAL(node->getMembers().size(), 3);
+
+    }
+
+    BOOST_AUTO_TEST_CASE(parse_class_with_method_with_duplicate_parametrs) {
+
+        std::string sample_code = "class aClass { func aFunc (a,b,c,b){} \n var aVar \n event anEvent }";
+
+        std::unique_ptr<Lexer> lexer = std::make_unique<Lexer>(
+                std::make_unique<std::stringstream>(sample_code)
+        );
+
+        Parser parser(std::move(lexer));
+
+
+        BOOST_CHECK_THROW(parser.parse(), std::invalid_argument);
+
+    }
+
+    BOOST_AUTO_TEST_CASE(parse_empty_block) {
+
+        std::string sample_code = "{ }";
+
+        std::unique_ptr<Lexer> lexer = std::make_unique<Lexer>(
+                std::make_unique<std::stringstream>(sample_code)
+        );
+
+        Parser parser(std::move(lexer));
+
+        auto tree = parser.parse();
+        BOOST_CHECK_NO_THROW(dynamic_cast<nodes::BlockNode *>(tree->getNodes().at(0).get()));
+
+
+    }
+
+    BOOST_AUTO_TEST_CASE(parse_nested_empty_block) {
+
+        std::string sample_code = "{ { } }";
+
+        std::unique_ptr<Lexer> lexer = std::make_unique<Lexer>(
+                std::make_unique<std::stringstream>(sample_code)
+        );
+
+        Parser parser(std::move(lexer));
+
+        auto tree = parser.parse();
+        auto node = dynamic_cast<nodes::BlockNode *>(tree->getNodes().at(0).get());
+
+        BOOST_CHECK_EQUAL(node->getStatements().size(), 1);
+
+
+    }
+
+
 
 
 BOOST_AUTO_TEST_SUITE_END()
