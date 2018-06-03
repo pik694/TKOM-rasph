@@ -9,11 +9,23 @@
 #include "ConditionNode.hpp"
 
 namespace rasph::common::ast::nodes {
-    class PrimaryConditionNode : public ProgramNode {
+    class PrimaryConditionNode : public AssignableNode {
     public:
         PrimaryConditionNode(const bool inverted_, std::unique_ptr<AssignableNode> node_) :
                 inverted_(inverted_),
                 node_(std::move(node_)) {}
+
+
+        std::unique_ptr<types::Object> value() override {
+
+            auto value = node_->value();
+            if (inverted_){
+                return std::unique_ptr<types::Object>(new types::Boolean(!(*value)));
+            }
+            return std::move(value);
+
+        }
+
 
     private:
         const bool inverted_;

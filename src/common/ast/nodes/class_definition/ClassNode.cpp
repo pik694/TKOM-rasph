@@ -19,3 +19,12 @@ void ClassNode::addNode(std::unique_ptr<ClassMemberNode> member) {
 const std::vector<std::unique_ptr<ClassMemberNode>> &ClassNode::getMembers() const {
     return members_;
 }
+
+void ClassNode::execute() {
+    build();
+}
+
+void ClassNode::build() {
+    //TODO
+    throw std::runtime_error("TOOD");
+}

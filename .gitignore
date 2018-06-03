@@ -3,3 +3,5 @@ TKOM
 .idea/
 cmake-build-debug/
 
+/tests/playground/CMakelists.txt
+/playground/playground.cpp

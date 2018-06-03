@@ -9,11 +9,15 @@
 #include "ProgramNode.hpp"
 
 namespace rasph::common::ast {
-    class ProgramTree {
+    class ProgramTree{
     public:
         void add(std::unique_ptr<ProgramNode> node);
 
         const std::vector<std::shared_ptr<ProgramNode>> &getNodes() const;
+
+        void run();
+
+    public:
 
         bool isEmpty();
 

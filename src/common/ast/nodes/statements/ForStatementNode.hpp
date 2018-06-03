@@ -21,6 +21,19 @@ namespace rasph::common::ast::nodes {
                 range_(std::move(range)),
                 block_(std::move(block)) {}
 
+
+        void execute() override {
+
+            //TODO: loop range
+
+            size_t start = 0;
+            size_t end = 0;
+
+            for (; start < end; ++start)
+                block_->execute();
+
+        }
+
     private:
 
         const std::string iterator_;

@@ -18,6 +18,7 @@ namespace rasph::common::ast::nodes {
                 lValue_(lValue_),
                 rValue_(std::move(rValue_)) {}
 
+
     private:
         const std::string lValue_;
         std::unique_ptr<AssignableNode> rValue_;

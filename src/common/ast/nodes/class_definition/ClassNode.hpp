@@ -20,9 +20,13 @@ namespace rasph::common::ast::nodes {
 
         const std::vector<std::unique_ptr<ClassMemberNode>> &getMembers() const;
 
+        void execute() override;
+
         ~ClassNode() override  = default;
 
     private:
+        void build();
+
         const std::string name_;
         std::vector<std::unique_ptr<ClassMemberNode>> members_;
 

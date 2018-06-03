@@ -14,14 +14,19 @@ namespace rasph::common::ast::nodes {
     class VariableAssignableNode : public AssignableNode {
     public:
 
-        explicit VariableAssignableNode(const std::string &name) : name_(name) {}
+        explicit VariableAssignableNode(std::string &&name) : name_(name) {}
 
         const std::string &getName() const {
             return name_;
         }
 
+        std::unique_ptr<types::Object> value() override {
+            //TODO: get value from SymbolManager
+            throw std::runtime_error("TODO");
+        }
+
     private:
-        const std::string& name_;
+        const std::string name_;
     };
 
 }

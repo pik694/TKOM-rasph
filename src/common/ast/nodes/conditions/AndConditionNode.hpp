@@ -9,7 +9,7 @@
 #include "EqualityConditionNode.hpp"
 
 namespace rasph::common::ast::nodes {
-    class AndConditionNode : public ProgramNode {
+    class AndConditionNode : public AssignableNode {
 
     public:
         AndConditionNode(std::unique_ptr<EqualityConditionNode> condition) {
@@ -18,6 +18,19 @@ namespace rasph::common::ast::nodes {
 
         void addCondition(std::unique_ptr<EqualityConditionNode> condition) {
             conditions_.push_back(std::move(condition));
+        }
+
+        std::unique_ptr<types::Object> value() override {
+            return std::unique_ptr<types::Object>(new types::Boolean(isTrue()));
+        }
+
+        bool isTrue(){
+            for (auto condition : conditions_){
+                if (!condition->isEqual()){
+                    return false;
+                }
+            }
+            return true;
         }
 
     private:

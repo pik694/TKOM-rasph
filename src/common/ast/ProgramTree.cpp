@@ -18,3 +18,9 @@ bool ProgramTree::isEmpty() {
 const std::vector<std::shared_ptr<ProgramNode>> &ProgramTree::getNodes() const {
     return atomicNodes_;
 }
+
+void ProgramTree::run() {
+    for(auto node : atomicNodes_){
+        node->execute();
+    }
+}

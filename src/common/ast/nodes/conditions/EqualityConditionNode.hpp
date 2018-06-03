@@ -10,7 +10,7 @@
 
 namespace rasph::common::ast::nodes {
 
-    class EqualityConditionNode : public ProgramNode {
+    class EqualityConditionNode : public AssignableNode {
     public:
 
         EqualityConditionNode(std::unique_ptr<RelationalConditionNode> condition) {
@@ -18,13 +18,25 @@ namespace rasph::common::ast::nodes {
         }
 
         void addCondition(rasph::common::tokens::TokenType tokenType, std::unique_ptr<RelationalConditionNode> condition) {
-            if (conditions_.size() != 1) throw std::runtime_error("Already ");\
-            tokenType = tokenType;
+
+            if (conditions_.size() != 1) throw std::runtime_error("Already full node");
+
+            this->tokenType_ = tokenType;
             conditions_.push_back(std::move(condition));
+
+        }
+
+        std::unique_ptr<types::Object> value() override {
+            return std::unique_ptr<types::Object>(new types::Boolean(isEqual()));
+        }
+
+        bool isEqual(){
+            bool equality = conditions_.at(0)->value() == conditions_.at(1)->value();
+            return tokenType_ == tokens::TokenType::EQUAL ? equality : !equality;
         }
 
     private:
-        std::list<std::unique_ptr<RelationalConditionNode>> conditions_;
+        std::vector<std::unique_ptr<RelationalConditionNode>> conditions_;
         common::tokens::TokenType tokenType_;
 
     };

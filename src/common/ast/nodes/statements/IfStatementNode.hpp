@@ -14,10 +14,18 @@ namespace rasph::common::ast::nodes {
     class IfStatementNode : public StatementNode {
 
     public:
-        IfStatementNode(std::unique_ptr<BlockNode> ifBlock, std::unique_ptr<ConditionNode> condition, std::unique_ptr<BlockNode> elseBlock = nullptr) :
+        IfStatementNode(std::unique_ptr<BlockNode> ifBlock, std::unique_ptr<ConditionNode> condition,
+                        std::unique_ptr<BlockNode> elseBlock = nullptr) :
                 ifBlock_(std::move(ifBlock)),
                 condition_(std::move(condition)),
                 elseBlock_(std::move(elseBlock)) {}
+
+        void execute() override {
+            if (static_cast<bool>(*condition_))
+                ifBlock_->execute();
+            else
+                elseBlock_->execute();
+        }
 
     private:
         std::unique_ptr<BlockNode> ifBlock_;

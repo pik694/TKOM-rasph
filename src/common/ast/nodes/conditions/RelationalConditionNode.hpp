@@ -9,7 +9,7 @@
 #include "PrimaryConditionNode.hpp"
 
 namespace rasph::common::ast::nodes {
-    class RelationalConditionNode : public ProgramNode {
+    class RelationalConditionNode : public AssignableNode {
 
     public:
         RelationalConditionNode(std::unique_ptr<PrimaryConditionNode> condition) {
@@ -18,7 +18,7 @@ namespace rasph::common::ast::nodes {
 
         void addCondition(rasph::common::tokens::TokenType tokenType, std::unique_ptr<PrimaryConditionNode> condition) {
             if (conditions_.size() != 1) throw std::runtime_error("Already ");\
-            tokenType = tokenType;
+            this->tokenType_ = tokenType;
             conditions_.push_back(std::move(condition));
         }
 

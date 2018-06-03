@@ -7,6 +7,7 @@
 
 #include <common/ast/ProgramNode.hpp>
 #include <common/ast/nodes/assignables/AssignableNode.hpp>
+#include <common/types/Boolean.hpp>
 #include "AndConditionNode.hpp"
 
 namespace rasph::common::ast::nodes {
@@ -18,6 +19,22 @@ namespace rasph::common::ast::nodes {
 
         void addCondition(std::unique_ptr<AndConditionNode> condition){
                 conditions_.push_back(std::move(condition));
+        }
+
+        std::unique_ptr<types::Object> value() override {
+            return std::unique_ptr<types::Object>(new types::Boolean(isTrue()));
+        }
+
+        operator bool(){
+            return isTrue();
+        }
+        
+        bool isTrue(){
+            for (auto condition : conditions_){
+                if (!static_cast<bool>(*condition->value()))
+                    return false;
+            }
+            return true;
         }
 
     private:
