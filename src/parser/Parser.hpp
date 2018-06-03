@@ -20,7 +20,7 @@ namespace rasph::parser {
 
     class Parser {
     public:
-        Parser(std::unique_ptr<lexer::Lexer> lexer);
+        explicit Parser(std::unique_ptr<lexer::Lexer> lexer);
 
         Parser(const Parser &) = delete;
 

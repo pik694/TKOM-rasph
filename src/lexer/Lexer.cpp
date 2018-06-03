@@ -63,7 +63,7 @@ Token rasph::lexer::Lexer::getToken() {
 
 
     if (std::isalnum(**iterator_) ||
-        **iterator_ == '_') // Alphanumeric - it will number, literal, keyword or identifier
+        **iterator_ == '_') // Alphanumeric - it will be a number, a literal, a keyword or an identifier
 
         return getAlphaNumToken();
 

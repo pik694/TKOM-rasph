@@ -574,3 +574,4 @@ std::shared_ptr<rasph::common::tokens::Token> Parser::peekToken() {
     return token;
 
 }
+

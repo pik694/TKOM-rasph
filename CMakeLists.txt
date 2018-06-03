@@ -11,6 +11,7 @@ include_directories(${Boost_INCLUDE_DIRS})
 add_subdirectory(src/lexer)
 add_subdirectory(src/common)
 add_subdirectory(src/parser)
+add_subdirectory(src/interpreter)
 
 add_subdirectory(tests)
 add_subdirectory(tests/lexer_tests)
