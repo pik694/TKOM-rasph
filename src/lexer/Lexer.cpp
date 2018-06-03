@@ -17,7 +17,7 @@ size_t rasph::lexer::Lexer::getCurrentColumn() const {
     return column_;
 }
 
-rasph::lexer::Lexer::Lexer(std::unique_ptr<std::istream> &&inputStream) :
+rasph::lexer::Lexer::Lexer(std::unique_ptr<std::istream> inputStream) :
         inputStream_(std::move(inputStream)),
         iterator_(*this, (*inputStream) >> std::noskipws), // do not skip whitespaces
         end_() {

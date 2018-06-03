@@ -7,6 +7,8 @@
 using namespace rasph::interpreter::environment;
 using namespace rasph::interpreter::environment::symbols;
 
+SymbolManager* SymbolManager::instance_ = nullptr;
+
 SymbolManager &SymbolManager::getInstance() {
     if (instance_ == nullptr)
         instance_ = new SymbolManager();
@@ -17,7 +19,7 @@ SymbolManager &SymbolManager::getInstance() {
 
 
 
-const Symbol& SymbolManager::getSymbol(const std::string& symbolName) {
+symbols::Symbol SymbolManager::getSymbol(const std::string& symbolName) {
 
     symbolsMutex_.lock();
 
@@ -25,23 +27,32 @@ const Symbol& SymbolManager::getSymbol(const std::string& symbolName) {
 
     symbolsMutex_.unlock();
 
-    if (symbolIt != symbols_.end()) return *(symbolIt->second);
+    if (symbolIt != symbols_.end())
+        return Symbol(symbolIt->second);
 
     throw std::out_of_range("Could not find symbol: " + symbolName);
 }
 
-void SymbolManager::saveSymbol(Symbol &&symbol) {
+void SymbolManager::saveSymbol(symbols::Symbol&& symbol) {
 
     std::lock_guard<std::mutex> guard(symbolsMutex_);
 
-    //TODO
+    if (symbols_.find(symbol.getName()) == symbols_.end())
+        symbols_.emplace(std::make_pair(std::string(symbol.getName()), std::move(symbol)));
 
-//    if (symbols_.find(symbol.getName()) != symbols_.end()){
-//
-////        symbols_.insert(std::make_pair(symbol.getName(), std::make_unique<Symbol>(std::move(symbol))));
-//    }
-//
-//    else
-//        symbols_.at(symbol.getName()) = std::make_unique<Symbol>(std::move(symbol));
+    else
+        symbols_.at(symbol.getName()) = std::move(symbol);
+
+}
+
+bool SymbolManager::contains(std::string const &symbolName) {
+
+    symbolsMutex_.lock();
+
+    auto symbolIt = symbols_.find(symbolName);
+
+    symbolsMutex_.unlock();
+
+    return symbolIt != symbols_.end();
 
 }

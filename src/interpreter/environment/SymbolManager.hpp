@@ -9,6 +9,7 @@
 #include <map>
 #include <mutex>
 #include <unordered_map>
+
 #include "symbols/Symbol.hpp"
 
 namespace rasph::interpreter::environment {
@@ -18,9 +19,11 @@ namespace rasph::interpreter::environment {
 
         static SymbolManager &getInstance();
 
-        const symbols::Symbol& getSymbol(const std::string& symbolName);
+        symbols::Symbol getSymbol(const std::string& symbolName);
 
         void saveSymbol(symbols::Symbol&& symbol);
+
+        bool contains(std::string const& symbolName);
 
         ~SymbolManager() = default;
 
@@ -31,7 +34,7 @@ namespace rasph::interpreter::environment {
 
 
         std::mutex symbolsMutex_;
-        std::unordered_map<std::string, std::unique_ptr<symbols::Symbol>> symbols_;
+        std::unordered_map<std::string, symbols::Symbol> symbols_;
 
     };
 }

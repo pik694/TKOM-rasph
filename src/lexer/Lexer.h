@@ -18,7 +18,7 @@ namespace rasph::lexer {
     class Lexer {
     public:
 
-        explicit Lexer(std::unique_ptr<std::istream> &&inputStream);
+        explicit Lexer(std::unique_ptr<std::istream> inputStream);
 
         size_t getCurrentLine() const;
 

@@ -1,7 +1,10 @@
 TKOM
 *.DS_Store
 .idea/
+
 cmake-build-debug/
 
 /tests/playground/CMakelists.txt
-/playground/playground.cpp
+tests/playground/playground.cpp
+src/interpreter/runnable/
+

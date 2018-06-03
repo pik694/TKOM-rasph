@@ -6,14 +6,22 @@
 #ifdef BOOST_TEST_DYN_LINK
 
 #include <boost/test/unit_test.hpp>
-#include <lexer/Lexer.h>
-#include <parser/Parser.hpp>
-#include <common/ast/nodes.hpp>
+#include <interpreter/environment/SymbolManager.hpp>
 
+using namespace rasph::interpreter::environment;
 
 BOOST_AUTO_TEST_SUITE(symbol_manager_test)
 
-    BOOST_AUTO_TEST_CASE(uninitialised_should_have_only_standard_methods){
+    BOOST_AUTO_TEST_CASE(should_return_symbol) {
+
+        symbols::Symbol symbol("a");
+
+        SymbolManager::getInstance().saveSymbol(std::move(symbol));
+
+        BOOST_CHECK(SymbolManager::getInstance().contains("a"));
+
+        BOOST_CHECK_NO_THROW(SymbolManager::getInstance().getSymbol("a"));
+
 
     }
 

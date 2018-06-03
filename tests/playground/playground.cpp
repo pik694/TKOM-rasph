@@ -6,10 +6,6 @@
 #ifdef BOOST_TEST_DYN_LINK
 
 #include <boost/test/unit_test.hpp>
-#include <lexer/Lexer.h>
-#include <parser/Parser.hpp>
-#include <common/ast/nodes.hpp>
-
 
 class Base {
 public:
@@ -41,9 +37,19 @@ BOOST_AUTO_TEST_SUITE(playground)
 
 
         Base& baseRef = base;
+        Base& childRef = child;
+
 
         BOOST_CHECK_EQUAL(baseRef.foo(),1);
-        BOOST_CHECK_EQUAL(child.foo(),2);
+        BOOST_CHECK_EQUAL(childRef.foo(),2);
+
+
+        Base* ptr = &child;
+        Base& ref = *ptr;
+
+        BOOST_CHECK_EQUAL(ptr->foo(),2);
+        BOOST_CHECK_EQUAL(ref.foo(),2);
+
 
 
 
