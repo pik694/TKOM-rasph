@@ -388,6 +388,44 @@ BOOST_AUTO_TEST_SUITE(interpreter_tests)
 
     }
 
+    BOOST_AUTO_TEST_CASE(if_simple_test_4) {
+
+        std::string sample_code = "if 2 > 1 { a = 5 } else {a = 6} ";
+
+        std::unique_ptr<Lexer> lexer = std::make_unique<Lexer>(
+                std::make_unique<std::stringstream>(sample_code)
+        );
+
+        Parser parser(std::move(lexer));
+
+        auto tree = parser.parse();
+
+        tree->run();
+
+        BOOST_CHECK_EQUAL(
+                dynamic_cast<Double const &>(SymbolManager::getInstance().getSymbol("a").getValue()).getValue(), 5);
+
+    }
+
+    BOOST_AUTO_TEST_CASE(if_simple_test_5) {
+
+        std::string sample_code = "if 0 >= 1 { a = 5 } else {a = 6} ";
+
+        std::unique_ptr<Lexer> lexer = std::make_unique<Lexer>(
+                std::make_unique<std::stringstream>(sample_code)
+        );
+
+        Parser parser(std::move(lexer));
+
+        auto tree = parser.parse();
+
+        tree->run();
+
+        BOOST_CHECK_EQUAL(
+                dynamic_cast<Double const &>(SymbolManager::getInstance().getSymbol("a").getValue()).getValue(), 6);
+
+    }
+
 
 BOOST_AUTO_TEST_SUITE_END()
 #endif

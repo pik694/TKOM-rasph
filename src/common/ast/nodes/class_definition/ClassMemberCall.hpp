@@ -11,7 +11,7 @@
 namespace rasph::common::ast::nodes {
     class ClassMemberCall : public  AssignableNode {
     public:
-        ClassMemberCall(const std::string &object_, const std::string &member_) : object_(object_), member_(member_) {}
+        ClassMemberCall(std::string object_, std::string member_) : object_(std::move(object_)), member_(std::move(member_)) {}
 
 
         std::unique_ptr<types::Object> value() override {
@@ -20,8 +20,8 @@ namespace rasph::common::ast::nodes {
         }
 
     private:
-        const std::string& object_;
-        const std::string& member_;
+        const std::string object_;
+        const std::string member_;
     };
 }
 
