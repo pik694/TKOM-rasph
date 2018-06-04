@@ -7,6 +7,7 @@
 
 
 #include <string>
+#include <interpreter/environment/SymbolManager.hpp>
 #include "AssignableNode.hpp"
 
 namespace rasph::common::ast::nodes {
@@ -21,8 +22,11 @@ namespace rasph::common::ast::nodes {
         }
 
         std::unique_ptr<types::Object> value() override {
-            //TODO: get value from SymbolManager
-            throw std::runtime_error("TODO");
+
+            auto symbol = interpreter::environment::SymbolManager::getInstance().getSymbol(name_);
+
+            return symbol.getValue().clone();
+
         }
 
     private:

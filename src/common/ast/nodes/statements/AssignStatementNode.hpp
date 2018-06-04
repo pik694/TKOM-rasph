@@ -19,6 +19,14 @@ namespace rasph::common::ast::nodes {
                 rValue_(std::move(rValue_)) {}
 
 
+        void execute() override {
+
+            interpreter::environment::symbols::Symbol symbol(lValue_, rValue_->value());
+
+            interpreter::environment::SymbolManager::getInstance().saveSymbol(std::move(symbol));
+        }
+
+
     private:
         const std::string lValue_;
         std::unique_ptr<AssignableNode> rValue_;

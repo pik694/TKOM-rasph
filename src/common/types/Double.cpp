@@ -31,3 +31,19 @@ std::unique_ptr<rasph::common::types::Double> rasph::common::types::Double::clon
     return std::unique_ptr<Double>(this->copyImplementation());
 
 }
+
+bool rasph::common::types::Double::operator<(rasph::common::types::Object &object) const {
+    return false;
+}
+
+bool rasph::common::types::Double::operator>(rasph::common::types::Object &object) const {
+    return false;
+}
+
+bool rasph::common::types::Double::operator<=(rasph::common::types::Object &object) const {
+    return false;
+}
+
+bool rasph::common::types::Double::operator>=(rasph::common::types::Object &object) const {
+    return false;
+}

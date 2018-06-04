@@ -16,6 +16,7 @@ namespace rasph::common::ast::nodes {
         LiteralNode(const tokens::Token &token_) : token_(token_) {}
 
         std::unique_ptr<types::Object> value() override {
+
             switch (token_.getType()) {
                 case tokens::TokenType::NUM_LITERAL:
                     return std::unique_ptr<types::Object>(

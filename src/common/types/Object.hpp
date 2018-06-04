@@ -15,11 +15,21 @@ namespace rasph::common::types {
 
         virtual bool operator!() const = 0;
 
+        virtual bool acceptLessComparison(Object&) = 0;
+        virtual bool acceptGreaterComparison(Object&) = 0;
+        
+
         std::unique_ptr<Object> clone() const {
             return std::unique_ptr<Object>(this->copyImplementation());
         }
 
         virtual ~Object() = default;
+
+        virtual bool operator<(Object&) const = 0;
+        virtual bool operator>(Object&) const = 0;
+        virtual bool operator<=(Object&) const = 0;
+        virtual bool operator>=(Object&) const = 0;
+
 
     private:
         virtual Object* copyImplementation() const = 0;

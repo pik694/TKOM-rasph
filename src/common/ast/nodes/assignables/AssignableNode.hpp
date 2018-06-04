@@ -13,6 +13,7 @@ namespace rasph::common::ast::nodes {
     class AssignableNode : public ProgramNode {
     public:
         virtual std::unique_ptr<types::Object> value() = 0;
+
     };
 
 }

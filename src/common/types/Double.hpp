@@ -20,6 +20,16 @@ namespace rasph::common::types {
 
         std::unique_ptr<Double> clone () const;
 
+        bool acceptComparison(Object& );
+
+        bool operator<(Object &object) const override;
+
+        bool operator>(Object &object) const override;
+
+        bool operator<=(Object &object) const override;
+
+        bool operator>=(Object &object) const override;
+
         bool operator!() const override;
 
     private:

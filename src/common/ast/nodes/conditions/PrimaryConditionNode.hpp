@@ -19,6 +19,7 @@ namespace rasph::common::ast::nodes {
         std::unique_ptr<types::Object> value() override {
 
             auto value = node_->value();
+
             if (inverted_){
                 return std::unique_ptr<types::Object>(new types::Boolean(!(*value)));
             }

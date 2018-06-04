@@ -9,7 +9,8 @@
 
 namespace rasph::common::ast::nodes {
     class StatementNode : public ProgramNode{
-        virtual void execute() = 0;
+    public:
+        void execute() override = 0;
     };
 }
 

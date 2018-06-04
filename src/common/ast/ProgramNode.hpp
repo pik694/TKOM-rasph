@@ -8,8 +8,8 @@
 namespace rasph::common::ast {
     class ProgramNode {
     public:
-        virtual void execute(){};
-        virtual ~ProgramNode() = 0;
+        virtual void execute() = 0;
+        virtual ~ProgramNode() = default;
     };
 }
 
