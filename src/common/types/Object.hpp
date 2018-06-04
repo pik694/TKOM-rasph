@@ -22,6 +22,8 @@ namespace rasph::common::types {
 
         virtual ~Object() = default;
 
+        virtual bool operator==(Object const &) const = 0;
+
         virtual bool operator<(Object const &) const = 0;
 
         virtual bool operator>(Object const &) const = 0;

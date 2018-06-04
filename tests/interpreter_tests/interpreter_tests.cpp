@@ -329,9 +329,9 @@ BOOST_AUTO_TEST_SUITE(interpreter_tests)
     }
 
 
-    BOOST_AUTO_TEST_CASE(assignment_bool_condition) {
+    BOOST_AUTO_TEST_CASE(if_simple_test_0) {
 
-        std::string sample_code = "true0 = 1 == 1";
+        std::string sample_code = "if 1 == 1 { a = true } else {a = false} ";
 
         std::unique_ptr<Lexer> lexer = std::make_unique<Lexer>(
                 std::make_unique<std::stringstream>(sample_code)
@@ -341,13 +341,29 @@ BOOST_AUTO_TEST_SUITE(interpreter_tests)
 
         auto tree = parser.parse();
 
-        BOOST_CHECK_EQUAL(tree->isEmpty(), false);
+        tree->run();
+
+        BOOST_CHECK_EQUAL(
+                dynamic_cast<Boolean const &>(SymbolManager::getInstance().getSymbol("a").getValue()).getValue(), true);
+
+    }
+
+    BOOST_AUTO_TEST_CASE(if_simple_test_1) {
+
+        std::string sample_code = "if 1 != 1 { a = 0 } else {a = 1} ";
+
+        std::unique_ptr<Lexer> lexer = std::make_unique<Lexer>(
+                std::make_unique<std::stringstream>(sample_code)
+        );
+
+        Parser parser(std::move(lexer));
+
+        auto tree = parser.parse();
 
         tree->run();
 
-
         BOOST_CHECK_EQUAL(
-                dynamic_cast<Boolean const &>(SymbolManager::getInstance().getSymbol("true0").getValue()).getValue(), true);
+                dynamic_cast<Double const &>(SymbolManager::getInstance().getSymbol("a").getValue()).getValue(), 1);
 
     }
 

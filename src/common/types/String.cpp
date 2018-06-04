@@ -43,6 +43,17 @@ bool String::operator>(Object const &object) const {
     return value_ > aString.value_;
 }
 
+bool String::operator==(Object const &object) const {
+    try {
+        auto &aString = dynamic_cast<String const &>(object);
+        return value_ == aString.value_;
+    }
+    catch (std::bad_cast&){
+        return false;
+    }
+
+}
+
 std::unique_ptr<Object>
 String::accept(const visitors::AddVisitor &visitor) const {
     return visitor.add(*this);

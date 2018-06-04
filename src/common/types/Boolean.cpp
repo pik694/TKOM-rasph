@@ -33,6 +33,18 @@ std::unique_ptr<Boolean> Boolean::clone() const {
 
 }
 
+bool Boolean::operator==(Object const &object) const {
+    try{
+        auto aBoolean = dynamic_cast<Boolean const &>(object);
+
+        return value_ == aBoolean.value_;
+
+    }
+    catch (std::bad_cast&){
+        return false;
+    }
+}
+
 bool Boolean::operator<(const Object &object) const {
     auto aBoolean = dynamic_cast<Boolean const &>(object);
 

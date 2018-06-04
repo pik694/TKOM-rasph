@@ -54,6 +54,8 @@ namespace rasph::common::types {
 
         std::unique_ptr<Object> accept(visitors::DivideVisitor const &visitor) const override;
 
+        bool operator==(Object const &object) const override;
+
     private:
 
         Double *copyImplementation() const override;

@@ -31,8 +31,8 @@ namespace rasph::common::ast::nodes {
         }
 
         bool isEqual(){
-            bool equality = conditions_.at(0)->value() == conditions_.at(1)->value();
-            return tokenType_ == tokens::TokenType::EQUAL ? equality : !equality;
+            bool equality = *(conditions_.at(0)->value()) == *(conditions_.at(1)->value());
+            return (tokenType_ == tokens::TokenType::EQUAL) == equality;
         }
 
     private:

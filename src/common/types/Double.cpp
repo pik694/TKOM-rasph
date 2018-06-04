@@ -49,6 +49,19 @@ bool Double::operator>(Object const &object) const {
     return value_ > aDouble.value_;
 }
 
+
+bool Double::operator==(Object const &object) const {
+    try{
+        auto &aDouble = dynamic_cast<Double const &>(object);
+
+        return value_ == aDouble.value_;
+
+    }
+    catch (std::bad_cast& e){
+        return false;
+    }
+}
+
 std::unique_ptr<Object>
 Double::operator+(const Object &object) const {
     return object.accept(static_cast<visitors::AddVisitor const&>(*this));

@@ -13,7 +13,7 @@ namespace rasph::common::ast::nodes {
     class RelationalConditionNode : public AssignableNode {
 
     public:
-        RelationalConditionNode(std::unique_ptr<PrimaryConditionNode> condition) {
+        RelationalConditionNode(std::unique_ptr<PrimaryConditionNode> condition): tokenType_(tokens::TokenType::FALSE) {
             conditions_.push_back(std::move(condition));
         }
 
@@ -26,8 +26,11 @@ namespace rasph::common::ast::nodes {
 
         std::unique_ptr<types::Object> value() override {
 
-            bool result = true;
+            if (conditions_.size() == 1)
+                return conditions_.at(0)->value();
 
+
+            bool result = true;
 
             switch (tokenType_) {
                 case tokens::TokenType::LESS:

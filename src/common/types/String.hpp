@@ -43,6 +43,8 @@ namespace rasph::common::types {
 
         std::unique_ptr<Object> add(Double const &aDouble) const override;
 
+        bool operator==(Object const &object) const override;
+
 
     private:
         String *copyImplementation() const override;
