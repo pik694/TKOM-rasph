@@ -86,7 +86,7 @@ std::unique_ptr<Object> Double::accept(visitors::DivideVisitor const &visitor) c
 }
 
 std::unique_ptr<Object> Double::add(String const &string) const {
-    return std::unique_ptr<Object>(new String(string.getValue() + std::to_string(value_)));
+    return std::unique_ptr<Object>(new String(std::to_string(value_) + string.getValue()));
 }
 
 std::unique_ptr<Object> Double::add(Double const &aDouble) const {

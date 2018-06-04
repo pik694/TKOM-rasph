@@ -11,7 +11,7 @@
 #include <string>
 
 namespace rasph::common::types {
-    class String : public Object {
+    class String : public Object, public visitors::AddVisitor{
     public:
         String(const std::string &value);
 
@@ -29,6 +29,8 @@ namespace rasph::common::types {
 
         bool operator>(Object const& object) const override;
 
+        std::unique_ptr<Object> operator+(Object const &object) const override;
+
         std::unique_ptr<Object> accept(visitors::AddVisitor const &visitor) const override;
 
         std::unique_ptr<Object> accept(visitors::SubtractVisitor const &visitor) const override;
@@ -36,6 +38,11 @@ namespace rasph::common::types {
         std::unique_ptr<Object> accept(visitors::MultiplyVisitor const &visitor) const override;
 
         std::unique_ptr<Object> accept(visitors::DivideVisitor const &visitor) const override;
+
+        std::unique_ptr<Object> add(String const &string) const override;
+
+        std::unique_ptr<Object> add(Double const &aDouble) const override;
+
 
     private:
         String *copyImplementation() const override;

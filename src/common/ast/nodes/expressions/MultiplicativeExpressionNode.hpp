@@ -27,7 +27,26 @@ namespace rasph::common::ast::nodes {
         }
 
         std::unique_ptr<types::Object> value() override {
-            return expressions_.front()->value();
+            auto exprIt = expressions_.begin();
+            auto operIt = operators_.begin();
+
+            auto value = (*exprIt)->value();
+            ++exprIt;
+
+            for (; exprIt != expressions_.end(); ++exprIt, ++operIt){
+                switch(*operIt){
+                    case TokenType::MULTIPLY:
+                        value = std::move(*value * *((*exprIt)->value()));
+                        break;
+                    case TokenType::DIVIDE:
+                        value = std::move(*value / *((*exprIt)->value()));
+                        break;
+                    default:
+                        throw std::invalid_argument("Expected additive operator (+/-)");
+                }
+            }
+
+            return value;
         }
 
         void execute() override {

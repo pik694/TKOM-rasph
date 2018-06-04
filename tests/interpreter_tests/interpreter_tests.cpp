@@ -11,6 +11,7 @@
 #include <parser/Parser.hpp>
 #include <interpreter/environment/SymbolManager.hpp>
 #include <common/types/Double.hpp>
+#include <common/types/String.hpp>
 
 
 using namespace rasph::common::types;
@@ -58,9 +59,11 @@ BOOST_AUTO_TEST_SUITE(interpreter_tests)
 
         BOOST_REQUIRE_NO_THROW(SymbolManager::getInstance().getSymbol("a"));
 
-        BOOST_REQUIRE_NO_THROW(auto a = dynamic_cast<Double const &>(SymbolManager::getInstance().getSymbol("a").getValue()));
+        BOOST_REQUIRE_NO_THROW(
+                auto a = dynamic_cast<Double const &>(SymbolManager::getInstance().getSymbol("a").getValue()));
 
-        BOOST_CHECK_EQUAL(dynamic_cast<Double const &>(SymbolManager::getInstance().getSymbol("a").getValue()).getValue(), 1.0);
+        BOOST_CHECK_EQUAL(
+                dynamic_cast<Double const &>(SymbolManager::getInstance().getSymbol("a").getValue()).getValue(), 1.0);
     }
 
     BOOST_AUTO_TEST_CASE(simple_assignment_statements_with_value_change) {
@@ -80,10 +83,11 @@ BOOST_AUTO_TEST_SUITE(interpreter_tests)
         tree->run();
 
 
-        BOOST_CHECK_EQUAL(dynamic_cast<Double const &>(SymbolManager::getInstance().getSymbol("a").getValue()).getValue(), 2.0);
+        BOOST_CHECK_EQUAL(
+                dynamic_cast<Double const &>(SymbolManager::getInstance().getSymbol("a").getValue()).getValue(), 2.0);
     }
 
-    BOOST_AUTO_TEST_CASE(assignment_with_simple_additon) {
+    BOOST_AUTO_TEST_CASE(assignment_with_doubles_additon) {
 
         std::string sample_code = "a = 1 + 2";
 
@@ -100,7 +104,193 @@ BOOST_AUTO_TEST_SUITE(interpreter_tests)
         tree->run();
 
 
-        BOOST_CHECK_EQUAL(dynamic_cast<Double const &>(SymbolManager::getInstance().getSymbol("a").getValue()).getValue(), 3.0);
+        BOOST_CHECK_EQUAL(
+                dynamic_cast<Double const &>(SymbolManager::getInstance().getSymbol("a").getValue()).getValue(), 3.0);
+    }
+
+    BOOST_AUTO_TEST_CASE(assignment_with_doubles_subtraction) {
+
+        std::string sample_code = "a = 1 - 2";
+
+        std::unique_ptr<Lexer> lexer = std::make_unique<Lexer>(
+                std::make_unique<std::stringstream>(sample_code)
+        );
+
+        Parser parser(std::move(lexer));
+
+        auto tree = parser.parse();
+
+        BOOST_CHECK_EQUAL(tree->isEmpty(), false);
+
+        tree->run();
+
+
+        BOOST_CHECK_EQUAL(
+                dynamic_cast<Double const &>(SymbolManager::getInstance().getSymbol("a").getValue()).getValue(), -1);
+    }
+
+
+    BOOST_AUTO_TEST_CASE(assignment_with_doubles_multiplication) {
+
+        std::string sample_code = "a = 2 * 2.5";
+
+        std::unique_ptr<Lexer> lexer = std::make_unique<Lexer>(
+                std::make_unique<std::stringstream>(sample_code)
+        );
+
+        Parser parser(std::move(lexer));
+
+        auto tree = parser.parse();
+
+        BOOST_CHECK_EQUAL(tree->isEmpty(), false);
+
+        tree->run();
+
+
+        BOOST_CHECK_EQUAL(
+                dynamic_cast<Double const &>(SymbolManager::getInstance().getSymbol("a").getValue()).getValue(), 5);
+    }
+
+
+    BOOST_AUTO_TEST_CASE(assignment_with_doubles_division) {
+
+        std::string sample_code = "a = 1 / 2";
+
+        std::unique_ptr<Lexer> lexer = std::make_unique<Lexer>(
+                std::make_unique<std::stringstream>(sample_code)
+        );
+
+        Parser parser(std::move(lexer));
+
+        auto tree = parser.parse();
+
+        BOOST_CHECK_EQUAL(tree->isEmpty(), false);
+
+        tree->run();
+
+
+        BOOST_CHECK_EQUAL(
+                dynamic_cast<Double const &>(SymbolManager::getInstance().getSymbol("a").getValue()).getValue(), 0.5);
+    }
+
+    BOOST_AUTO_TEST_CASE(double_string_additon) {
+
+        std::string sample_code = "a = 1 + \" test\"";
+
+        std::unique_ptr<Lexer> lexer = std::make_unique<Lexer>(
+                std::make_unique<std::stringstream>(sample_code)
+        );
+
+        Parser parser(std::move(lexer));
+
+        auto tree = parser.parse();
+
+        BOOST_CHECK_EQUAL(tree->isEmpty(), false);
+
+        tree->run();
+
+
+        BOOST_CHECK_EQUAL(
+                dynamic_cast<String const &>(SymbolManager::getInstance().getSymbol("a").getValue()).getValue(),
+                std::string("1.000000 test"));
+    }
+
+    BOOST_AUTO_TEST_CASE(invalid_double_operators) {
+
+        std::string sample_code = "a = 1 + true";
+
+        std::unique_ptr<Lexer> lexer = std::make_unique<Lexer>(
+                std::make_unique<std::stringstream>(sample_code)
+        );
+
+        Parser parser(std::move(lexer));
+
+        auto tree = parser.parse();
+
+        BOOST_CHECK_EQUAL(tree->isEmpty(), false);
+
+        BOOST_CHECK_THROW(tree->run(), std::runtime_error);
+
+
+    }
+
+    BOOST_AUTO_TEST_CASE(assignment_and_update) {
+
+        std::string sample_code = "a = 1 \n a = 1 + a";
+
+        std::unique_ptr<Lexer> lexer = std::make_unique<Lexer>(
+                std::make_unique<std::stringstream>(sample_code)
+        );
+
+        Parser parser(std::move(lexer));
+
+        auto tree = parser.parse();
+
+        tree->run();
+
+        BOOST_CHECK_EQUAL(
+                dynamic_cast<Double const &>(SymbolManager::getInstance().getSymbol("a").getValue()).getValue(), 2);
+
+
+    }
+
+    BOOST_AUTO_TEST_CASE(assignment_with_identifiers_only_addition) {
+
+        std::string sample_code = "a = 1 \n a = a + a";
+
+        std::unique_ptr<Lexer> lexer = std::make_unique<Lexer>(
+                std::make_unique<std::stringstream>(sample_code)
+        );
+
+        Parser parser(std::move(lexer));
+
+        auto tree = parser.parse();
+
+        tree->run();
+
+        BOOST_CHECK_EQUAL(
+                dynamic_cast<Double const &>(SymbolManager::getInstance().getSymbol("a").getValue()).getValue(), 2);
+
+    }
+
+    BOOST_AUTO_TEST_CASE(assignment_with_identifiers_only_multiplication) {
+
+        std::string sample_code = "a = 2 \n a = a * a";
+
+        std::unique_ptr<Lexer> lexer = std::make_unique<Lexer>(
+                std::make_unique<std::stringstream>(sample_code)
+        );
+
+        Parser parser(std::move(lexer));
+
+        auto tree = parser.parse();
+
+        tree->run();
+
+        BOOST_CHECK_EQUAL(
+                dynamic_cast<Double const &>(SymbolManager::getInstance().getSymbol("a").getValue()).getValue(), 4);
+
+    }
+
+    BOOST_AUTO_TEST_CASE(assignment_string_addition) {
+
+        std::string sample_code = "a = \"1\" + \"2\"";
+
+        std::unique_ptr<Lexer> lexer = std::make_unique<Lexer>(
+                std::make_unique<std::stringstream>(sample_code)
+        );
+
+        Parser parser(std::move(lexer));
+
+        auto tree = parser.parse();
+
+        BOOST_CHECK_EQUAL(tree->isEmpty(), false);
+
+        tree->run();
+
+
+        BOOST_CHECK_EQUAL(
+                dynamic_cast<String const &>(SymbolManager::getInstance().getSymbol("a").getValue()).getValue(), std::string("12"));
     }
 
 

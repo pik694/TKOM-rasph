@@ -3,6 +3,7 @@
 //
 
 #include "String.hpp"
+#include "Double.hpp"
 
 using namespace rasph::common::types;
 
@@ -61,3 +62,21 @@ std::unique_ptr<Object>
 String::accept(const visitors::DivideVisitor &visitor) const {
     return visitor.divide(*this);
 }
+
+std::unique_ptr<Object> String::operator+(Object const &object) const {
+    return object.accept(static_cast<visitors::AddVisitor const&>(*this));
+}
+
+
+std::unique_ptr<Object> String::add(String const &string) const {
+
+    return std::unique_ptr<Object>(new String(value_ + string.value_));
+
+}
+
+std::unique_ptr<Object> String::add(Double const &aDouble) const {
+    return std::unique_ptr<Object>(new String(value_ + std::to_string(aDouble.getValue())));
+}
+
+
+
