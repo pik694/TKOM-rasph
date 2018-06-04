@@ -17,6 +17,15 @@ namespace rasph::common::types {
 
         void setValue(const std::string &value_);
 
+        explicit operator bool() const override;
+
+        std::unique_ptr<String> clone() const;
+
+        bool operator!() const override;
+
+    private:
+        String *copyImplementation() const override;
+
     private:
         std::string value_;
     };

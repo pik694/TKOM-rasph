@@ -5,6 +5,8 @@
 #ifndef RASPH_OBJECT_HPP
 #define RASPH_OBJECT_HPP
 
+#include <memory>
+
 namespace rasph::common::types {
     class Object {
     public:
@@ -13,7 +15,14 @@ namespace rasph::common::types {
 
         virtual bool operator!() const = 0;
 
+        std::unique_ptr<Object> clone() const {
+            return std::unique_ptr<Object>(this->copyImplementation());
+        }
+
         virtual ~Object() = default;
+
+    private:
+        virtual Object* copyImplementation() const = 0;
     };
 }
 

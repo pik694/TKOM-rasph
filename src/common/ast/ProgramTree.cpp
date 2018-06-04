@@ -10,7 +10,6 @@ void ProgramTree::add(std::unique_ptr<ProgramNode> node) {
     atomicNodes_.push_back(std::move(node));
 }
 
-
 bool ProgramTree::isEmpty() {
     return atomicNodes_.empty();
 }

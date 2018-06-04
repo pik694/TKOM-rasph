@@ -6,20 +6,21 @@
 #define RASPH_INTERPRETER_HPP
 
 
-#include <istream>
+#include <iostream>
 
 
 namespace rasph::interpreter {
     class Interpreter {
     public:
 
-        Interpreter(std::istream &istream);
+        Interpreter(std::istream &istream, std::ostream& ostream);
 
         void operator()();
 
     private:
 
         std::istream &istream_;
+        std::ostream &ostream_;
 
     };
 }

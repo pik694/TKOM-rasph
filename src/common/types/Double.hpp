@@ -16,7 +16,16 @@ namespace rasph::common::types {
 
         void setValue(double value_);
 
+        explicit operator bool() const override;
+
+        std::unique_ptr<Double> clone () const;
+
+        bool operator!() const override;
+
     private:
+
+        Double *copyImplementation() const override;
+
         double value_;
     };
 }
