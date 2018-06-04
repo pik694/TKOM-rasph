@@ -10,8 +10,10 @@
 #include <interpreter/Interpreter.hpp>
 #include <parser/Parser.hpp>
 #include <interpreter/environment/SymbolManager.hpp>
+
 #include <common/types/Double.hpp>
 #include <common/types/String.hpp>
+#include <common/types/Boolean.hpp>
 
 
 using namespace rasph::common::types;
@@ -290,10 +292,64 @@ BOOST_AUTO_TEST_SUITE(interpreter_tests)
 
 
         BOOST_CHECK_EQUAL(
-                dynamic_cast<String const &>(SymbolManager::getInstance().getSymbol("a").getValue()).getValue(), std::string("12"));
+                dynamic_cast<String const &>(SymbolManager::getInstance().getSymbol("a").getValue()).getValue(),
+                std::string("12"));
     }
 
 
+    BOOST_AUTO_TEST_CASE(assignment_bool) {
+
+        std::string sample_code = "true0 = true \n true1 = on \n false0 = false \n false1 = off";
+
+        std::unique_ptr<Lexer> lexer = std::make_unique<Lexer>(
+                std::make_unique<std::stringstream>(sample_code)
+        );
+
+        Parser parser(std::move(lexer));
+
+        auto tree = parser.parse();
+
+        BOOST_CHECK_EQUAL(tree->isEmpty(), false);
+
+        tree->run();
+
+
+        BOOST_CHECK_EQUAL(
+                dynamic_cast<Boolean const &>(SymbolManager::getInstance().getSymbol("true0").getValue()).getValue(), true);
+        BOOST_CHECK_EQUAL(
+                dynamic_cast<Boolean const &>(SymbolManager::getInstance().getSymbol("true1").getValue()).getValue(), true);
+
+
+
+        BOOST_CHECK_EQUAL(
+                dynamic_cast<Boolean const &>(SymbolManager::getInstance().getSymbol("false0").getValue()).getValue(), false);
+        BOOST_CHECK_EQUAL(
+                dynamic_cast<Boolean const &>(SymbolManager::getInstance().getSymbol("false1").getValue()).getValue(), false);
+
+    }
+
+
+    BOOST_AUTO_TEST_CASE(assignment_bool_condition) {
+
+        std::string sample_code = "true0 = 1 == 1";
+
+        std::unique_ptr<Lexer> lexer = std::make_unique<Lexer>(
+                std::make_unique<std::stringstream>(sample_code)
+        );
+
+        Parser parser(std::move(lexer));
+
+        auto tree = parser.parse();
+
+        BOOST_CHECK_EQUAL(tree->isEmpty(), false);
+
+        tree->run();
+
+
+        BOOST_CHECK_EQUAL(
+                dynamic_cast<Boolean const &>(SymbolManager::getInstance().getSymbol("true0").getValue()).getValue(), true);
+
+    }
 
 
 BOOST_AUTO_TEST_SUITE_END()

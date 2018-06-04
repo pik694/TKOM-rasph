@@ -26,6 +26,14 @@ namespace rasph::common::ast::nodes {
                     return std::unique_ptr<types::Object>(
                             new types::String(token_.getTextValue())
                     );
+                case tokens::TokenType::TRUE:
+                    return std::unique_ptr<types::Object>(
+                            new types::Boolean(true)
+                    );
+                case tokens::TokenType::FALSE:
+                    return std::unique_ptr<types::Object>(
+                            new types::Boolean(false)
+                    );
                 default:
                     throw std::runtime_error("Invalid token type");
             }
