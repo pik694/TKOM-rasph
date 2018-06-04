@@ -24,11 +24,12 @@ namespace rasph::common::ast::nodes {
             return std::unique_ptr<types::Object>(new types::Boolean(isTrue()));
         }
 
-        bool isTrue(){
-            for (auto& condition : conditions_){
-                if (!condition->isEqual()){
+        bool isTrue() {
+            for (auto &condition : conditions_) {
+
+                bool a = condition->isEqual();
+                if (!(condition->isEqual()))
                     return false;
-                }
             }
             return true;
         }

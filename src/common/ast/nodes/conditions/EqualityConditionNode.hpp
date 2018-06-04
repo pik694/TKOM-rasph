@@ -13,7 +13,7 @@ namespace rasph::common::ast::nodes {
     class EqualityConditionNode : public AssignableNode {
     public:
 
-        EqualityConditionNode(std::unique_ptr<RelationalConditionNode> condition) {
+        EqualityConditionNode(std::unique_ptr<RelationalConditionNode> condition): tokenType_(tokens::TokenType::EQUAL) {
             conditions_.push_back(std::move(condition));
         }
 
@@ -31,7 +31,12 @@ namespace rasph::common::ast::nodes {
         }
 
         bool isEqual(){
-            bool equality = *(conditions_.at(0)->value()) == *(conditions_.at(1)->value());
+
+            bool equality;
+            if (conditions_.size() == 1)
+                equality = static_cast<bool>(*(conditions_.at(0)->value()));
+
+            else equality = *(conditions_.at(0)->value()) == *(conditions_.at(1)->value());
             return (tokenType_ == tokens::TokenType::EQUAL) == equality;
         }
 

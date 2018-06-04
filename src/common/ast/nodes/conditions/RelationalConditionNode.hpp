@@ -34,16 +34,16 @@ namespace rasph::common::ast::nodes {
 
             switch (tokenType_) {
                 case tokens::TokenType::LESS:
-                    result =  (*conditions_.at(0)->value()) < (*conditions_.at(0)->value());
+                    result =  (*conditions_.at(0)->value()) < (*conditions_.at(1)->value());
                     break;
                 case tokens::TokenType::LEQUAL:
-                    result =  (*conditions_.at(0)->value()) <= (*conditions_.at(0)->value());
+                    result =  (*conditions_.at(0)->value()) <= (*conditions_.at(1)->value());
                     break;
                 case tokens::TokenType::GREATER:
-                    result =  (*conditions_.at(0)->value()) > (*conditions_.at(0)->value());
+                    result =  (*conditions_.at(0)->value()) > (*conditions_.at(1)->value());
                     break;
                 case tokens::TokenType::GEQUAL:
-                    result =  (*conditions_.at(0)->value()) >= (*conditions_.at(0)->value());
+                    result =  (*conditions_.at(0)->value()) >= (*conditions_.at(1)->value());
                     break;
                 default:
                     throw std::runtime_error("Invalid token type");
