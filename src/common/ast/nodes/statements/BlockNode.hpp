@@ -23,7 +23,7 @@ namespace rasph::common::ast::nodes {
         }
 
         void execute() override {
-            for (auto statement : statements_) {
+            for (auto& statement : statements_) {
                 statement->execute();
             }
         }

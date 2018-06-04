@@ -41,9 +41,6 @@ BOOST_AUTO_TEST_SUITE(symbol_manager_test)
         SymbolManager::getInstance().saveSymbol(std::move(symbol));
 
 
-        auto& a = SymbolManager::getInstance().getSymbol("a").getValue();
-
-
         BOOST_CHECK_EQUAL(
                 dynamic_cast<Double const &>(SymbolManager::getInstance().getSymbol("a").getValue()).getValue(), 1.0);
 

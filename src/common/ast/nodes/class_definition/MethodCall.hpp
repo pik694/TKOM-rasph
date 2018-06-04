@@ -19,6 +19,11 @@ namespace rasph::common::ast::nodes {
             parameters_.push_back(std::move(param));
         }
 
+        std::unique_ptr<types::Object> value() override {
+            //TODO
+            throw std::runtime_error("Not implemented yet");
+        }
+
     private:
         std::list<std::unique_ptr<AssignableNode>> parameters_;
 

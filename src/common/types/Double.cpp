@@ -3,47 +3,104 @@
 //
 
 #include "Double.hpp"
+#include "String.hpp"
 
-rasph::common::types::Double::Double(double value) : value_(value) {}
+using namespace rasph::common::types;
 
-double rasph::common::types::Double::getValue() const {
+Double::Double(double value): value_(value) {}
+
+double Double::getValue() const {
     return value_;
 }
 
-void rasph::common::types::Double::setValue(double value_) {
+void Double::setValue(double value_) {
     Double::value_ = value_;
 }
 
 
-rasph::common::types::Double::operator bool() const {
+Double::operator bool() const {
     return value_ != 0.0;
 }
 
-bool rasph::common::types::Double::operator!() const {
+bool Double::operator!() const {
     return !bool();
 }
 
-rasph::common::types::Double *rasph::common::types::Double::copyImplementation() const {
+Double *Double::copyImplementation() const {
     return new Double(*this);
 }
 
-std::unique_ptr<rasph::common::types::Double> rasph::common::types::Double::clone() const {
+std::unique_ptr<Double> Double::clone() const {
     return std::unique_ptr<Double>(this->copyImplementation());
 
 }
 
-bool rasph::common::types::Double::operator<(rasph::common::types::Object &object) const {
-    return false;
+bool Double::operator<(Object const &object) const {
+
+    auto &aDouble = dynamic_cast<Double const &>(object);
+
+    return value_ < aDouble.value_;
+
 }
 
-bool rasph::common::types::Double::operator>(rasph::common::types::Object &object) const {
-    return false;
+bool Double::operator>(Object const &object) const {
+
+    auto &aDouble = dynamic_cast<Double const &>(object);
+    return value_ > aDouble.value_;
 }
 
-bool rasph::common::types::Double::operator<=(rasph::common::types::Object &object) const {
-    return false;
+std::unique_ptr<Object>
+Double::operator+(const Object &object) const {
+    return object.accept(static_cast<visitors::AddVisitor const&>(*this));
 }
 
-bool rasph::common::types::Double::operator>=(rasph::common::types::Object &object) const {
-    return false;
+std::unique_ptr<Object>
+Double::operator-(const Object &object) const {
+    return object.accept(static_cast<visitors::SubtractVisitor const&>(*this));
+}
+
+std::unique_ptr<Object>
+Double::operator*(const Object &object) const {
+    return object.accept(static_cast<visitors::MultiplyVisitor const&>(*this));
+}
+
+std::unique_ptr<Object>
+Double::operator/(const Object &object) const {
+    return object.accept(static_cast<visitors::DivideVisitor const&>(*this));
+}
+
+std::unique_ptr<Object> Double::accept(visitors::AddVisitor const &visitor) const {
+    return visitor.add(*this);
+}
+
+std::unique_ptr<Object> Double::accept(visitors::SubtractVisitor const &visitor) const {
+    return visitor.subtract(*this);
+}
+
+std::unique_ptr<Object> Double::accept(visitors::MultiplyVisitor const &visitor) const {
+    return visitor.multiply(*this);
+}
+
+std::unique_ptr<Object> Double::accept(visitors::DivideVisitor const &visitor) const {
+    return visitor.divide(*this);
+}
+
+std::unique_ptr<Object> Double::add(String const &string) const {
+    return std::unique_ptr<Object>(new String(string.getValue() + std::to_string(value_)));
+}
+
+std::unique_ptr<Object> Double::add(Double const &aDouble) const {
+    return std::unique_ptr<Object>(new Double(value_ + aDouble.value_));
+}
+
+std::unique_ptr<Object> Double::subtract(Double const &aDouble) const {
+    return std::unique_ptr<Object>(new Double(value_ - aDouble.value_));;
+}
+
+std::unique_ptr<Object> Double::multiply(Double const &aDouble) const {
+    return std::unique_ptr<Object>(new Double(value_ * aDouble.value_));
+}
+
+std::unique_ptr<Object> Double::divide(Double const &aDouble) const {
+    return std::unique_ptr<Object>(new Double(value_ / aDouble.value_));
 }

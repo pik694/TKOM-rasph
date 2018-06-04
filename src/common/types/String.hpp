@@ -5,8 +5,10 @@
 #ifndef RASPH_STRING_HPP
 #define RASPH_STRING_HPP
 
-#include <string>
+
+
 #include "Object.hpp"
+#include <string>
 
 namespace rasph::common::types {
     class String : public Object {
@@ -22,6 +24,18 @@ namespace rasph::common::types {
         std::unique_ptr<String> clone() const;
 
         bool operator!() const override;
+
+        bool operator<(Object const& object) const override;
+
+        bool operator>(Object const& object) const override;
+
+        std::unique_ptr<Object> accept(visitors::AddVisitor const &visitor) const override;
+
+        std::unique_ptr<Object> accept(visitors::SubtractVisitor const &visitor) const override;
+
+        std::unique_ptr<Object> accept(visitors::MultiplyVisitor const &visitor) const override;
+
+        std::unique_ptr<Object> accept(visitors::DivideVisitor const &visitor) const override;
 
     private:
         String *copyImplementation() const override;

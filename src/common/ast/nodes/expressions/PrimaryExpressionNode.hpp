@@ -6,9 +6,17 @@
 #define RASPH_PRIMARYEXPRESSIONNODE_HPP
 
 namespace rasph::common::ast::nodes {
-    class PrimaryExpressionNode : public ProgramNode{
+    class PrimaryExpressionNode : public AssignableNode {
     public:
         PrimaryExpressionNode(std::unique_ptr<AssignableNode> expression_) : expression_(std::move(expression_)) {}
+
+        void execute() override {
+            expression_->execute();
+        }
+
+        std::unique_ptr<types::Object> value() override {
+            return expression_->value();
+        }
 
     private:
         std::unique_ptr<nodes::AssignableNode> expression_;

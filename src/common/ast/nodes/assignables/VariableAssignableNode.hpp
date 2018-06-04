@@ -15,7 +15,7 @@ namespace rasph::common::ast::nodes {
     class VariableAssignableNode : public AssignableNode {
     public:
 
-        explicit VariableAssignableNode(std::string &&name) : name_(name) {}
+        explicit VariableAssignableNode(std::string name) : name_(std::move(name)) {}
 
         const std::string &getName() const {
             return name_;
@@ -28,6 +28,8 @@ namespace rasph::common::ast::nodes {
             return symbol.getValue().clone();
 
         }
+
+
 
     private:
         const std::string name_;

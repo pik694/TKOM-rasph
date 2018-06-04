@@ -12,6 +12,9 @@ namespace rasph::common::ast::nodes {
 
     class AssignableNode : public ProgramNode {
     public:
+
+        void execute() override {}
+
         virtual std::unique_ptr<types::Object> value() = 0;
 
     };

@@ -11,6 +11,11 @@ namespace rasph::common::ast::nodes {
     class AttributeMemberNode : public ClassMemberNode{
     public:
         AttributeMemberNode(const std::string &name) : ClassMemberNode(name){};
+
+        void execute() override {
+            //TODO
+            throw std::runtime_error("Not implemented yet");
+        }
     };
 }
 

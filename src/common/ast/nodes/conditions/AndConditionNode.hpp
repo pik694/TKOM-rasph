@@ -25,7 +25,7 @@ namespace rasph::common::ast::nodes {
         }
 
         bool isTrue(){
-            for (auto condition : conditions_){
+            for (auto& condition : conditions_){
                 if (!condition->isEqual()){
                     return false;
                 }

@@ -4,28 +4,60 @@
 
 #include "String.hpp"
 
-rasph::common::types::String::String(const std::string &value) : value_(value) {}
+using namespace rasph::common::types;
 
-const std::string &rasph::common::types::String::getValue() const {
+String::String(const std::string &value) : value_(value) {}
+
+const std::string &String::getValue() const {
     return value_;
 }
 
-void rasph::common::types::String::setValue(const std::string &value_) {
+void String::setValue(const std::string &value_) {
     String::value_ = value_;
 }
 
-rasph::common::types::String::operator bool() const {
+String::operator bool() const {
     return value_.size() == 0;
 }
 
-bool rasph::common::types::String::operator!() const {
+bool String::operator!() const {
     return !bool();
 }
 
-rasph::common::types::String *rasph::common::types::String::copyImplementation() const {
+String *String::copyImplementation() const {
     return new String(*this);
 }
 
-std::unique_ptr<rasph::common::types::String> rasph::common::types::String::clone() const {
+std::unique_ptr<String> String::clone() const {
     return std::unique_ptr<String>(this->copyImplementation());
+}
+
+bool String::operator<(Object const &object) const {
+    auto &aString = dynamic_cast<String const &>(object);
+    return value_ < aString.value_;
+}
+
+bool String::operator>(Object const &object) const {
+    auto &aString = dynamic_cast<String const &>(object);
+    return value_ > aString.value_;
+}
+
+std::unique_ptr<Object>
+String::accept(const visitors::AddVisitor &visitor) const {
+    return visitor.add(*this);
+}
+
+std::unique_ptr<Object>
+String::accept(const visitors::SubtractVisitor &visitor) const {
+    return visitor.subtract(*this);
+}
+
+std::unique_ptr<Object>
+String::accept(const visitors::MultiplyVisitor &visitor) const {
+    return visitor.multiply(*this);
+}
+
+std::unique_ptr<Object>
+String::accept(const visitors::DivideVisitor &visitor) const {
+    return visitor.divide(*this);
 }

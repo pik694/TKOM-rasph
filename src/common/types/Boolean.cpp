@@ -4,29 +4,65 @@
 
 #include "Boolean.hpp"
 
-rasph::common::types::Boolean::Boolean(bool value) : value_(value) {}
+using namespace rasph::common::types;
 
-bool rasph::common::types::Boolean::getValue() const {
+Boolean::Boolean(bool value) : value_(value) {}
+
+bool Boolean::getValue() const {
     return value_;
 }
 
-void rasph::common::types::Boolean::setValue(bool value_) {
+void Boolean::setValue(bool value_) {
     this->value_ = value_;
 }
 
-rasph::common::types::Boolean::operator bool() const {
+Boolean::operator bool() const {
     return value_;
 }
 
-bool rasph::common::types::Boolean::operator!() const {
+bool Boolean::operator!() const {
     return !value_;
 }
 
-rasph::common::types::Boolean *rasph::common::types::Boolean::copyImplementation() const {
+Boolean *Boolean::copyImplementation() const {
     return new Boolean(*this);
 }
 
-std::unique_ptr<rasph::common::types::Boolean> rasph::common::types::Boolean::clone() const {
+std::unique_ptr<Boolean> Boolean::clone() const {
     return std::unique_ptr<Boolean>(this->copyImplementation());
 
 }
+
+bool Boolean::operator<(const Object &object) const {
+    auto aBoolean = dynamic_cast<Boolean const &>(object);
+
+    return value_ < aBoolean.value_;
+}
+
+bool Boolean::operator>(const Object &object) const {
+    auto aBoolean = dynamic_cast<Boolean const &>(object);
+
+    return value_ > aBoolean.value_;
+}
+
+std::unique_ptr<Object>
+Boolean::accept(const visitors::AddVisitor &visitor) const {
+    return visitor.add(*this);
+}
+
+std::unique_ptr<Object>
+Boolean::accept(const visitors::SubtractVisitor &visitor) const {
+    return visitor.subtract(*this);
+}
+
+std::unique_ptr<Object>
+Boolean::accept(const visitors::MultiplyVisitor &visitor) const {
+    return visitor.multiply(*this);
+}
+
+std::unique_ptr<Object>
+Boolean::accept(const visitors::DivideVisitor &visitor) const {
+    return visitor.divide(*this);
+}
+
+

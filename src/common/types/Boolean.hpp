@@ -20,7 +20,19 @@ namespace rasph::common::types {
 
         std::unique_ptr<Boolean> clone() const;
 
+        bool operator<(Object const &object) const override;
+
+        bool operator>(Object const &object) const override;
+
         bool operator!() const override;
+
+        std::unique_ptr<Object> accept(visitors::AddVisitor const &visitor) const override;
+
+        std::unique_ptr<Object> accept(visitors::SubtractVisitor const &visitor) const override;
+
+        std::unique_ptr<Object> accept(visitors::MultiplyVisitor const &visitor) const override;
+
+        std::unique_ptr<Object> accept(visitors::DivideVisitor const &visitor) const override;
 
     private:
         Boolean *copyImplementation() const override;

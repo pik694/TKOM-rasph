@@ -30,7 +30,7 @@ namespace rasph::common::ast::nodes {
         }
         
         bool isTrue(){
-            for (auto condition : conditions_){
+            for (auto& condition : conditions_){
                 if (!static_cast<bool>(*condition->value()))
                     return false;
             }

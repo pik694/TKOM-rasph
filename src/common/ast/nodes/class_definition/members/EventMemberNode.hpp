@@ -11,6 +11,11 @@ namespace rasph::common::ast::nodes {
     class EventMemberNode : public ClassMemberNode{
     public:
         EventMemberNode(const std::string &name) : ClassMemberNode(name) {}
+
+        void execute() override {
+            //TODO
+            throw std::runtime_error("Not implemented yet");
+        }
     };
 }
 

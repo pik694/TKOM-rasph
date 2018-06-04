@@ -6,6 +6,8 @@
 #define RASPH_EXPRESSION_HPP
 
 #include <common/ast/nodes/assignables/AssignableNode.hpp>
+#include <common/tokens/tokens.h>
+#include <list>
 #include "MultiplicativeExpressionNode.hpp"
 
 namespace rasph::common::ast::nodes {
@@ -22,6 +24,30 @@ namespace rasph::common::ast::nodes {
             expressions_.push_back(std::move(expression));
             operators_.push_back(token);
 
+        }
+
+        std::unique_ptr<types::Object> value() override {
+
+            auto exprIt = expressions_.begin();
+            auto operIt = operators_.begin();
+
+            auto value = (*exprIt)->value();
+            ++exprIt;
+
+            for (; exprIt != expressions_.end(); ++exprIt, ++operIt){
+                switch(*operIt){
+                    case TokenType::PLUS:
+                        value = std::move(*value + *((*exprIt)->value()));
+                        break;
+                    case TokenType::MINUS:
+                        value = std::move(*value - *((*exprIt)->value()));
+                        break;
+                    default:
+                        throw std::invalid_argument("Expected additive operator (+/-)");
+                }
+            }
+
+            return value;
         }
 
     private:

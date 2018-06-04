@@ -9,7 +9,7 @@
 #include "PrimaryExpressionNode.hpp"
 
 namespace rasph::common::ast::nodes {
-    class MultiplicativeExpressionNode : public  ProgramNode {
+    class MultiplicativeExpressionNode : public  AssignableNode {
     public:
 
 
@@ -24,6 +24,15 @@ namespace rasph::common::ast::nodes {
             expressions_.push_back(std::move(expression));
             operators_.push_back(token);
 
+        }
+
+        std::unique_ptr<types::Object> value() override {
+            return expressions_.front()->value();
+        }
+
+        void execute() override {
+            //TODO
+            throw std::runtime_error("Not implemented yet");
         }
 
     private:

@@ -13,6 +13,12 @@ namespace rasph::common::ast::nodes {
     public:
         ClassMemberCall(const std::string &object_, const std::string &member_) : object_(object_), member_(member_) {}
 
+
+        std::unique_ptr<types::Object> value() override {
+            //TODO
+            throw std::runtime_error("Not implemented yet");
+        }
+
     private:
         const std::string& object_;
         const std::string& member_;
