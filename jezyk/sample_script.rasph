@@ -18,21 +18,8 @@ someObject = SomeClass()
 anotherObject = SomeClass()
 
 every 1 min {
-
     someObject.someMethod()
-
 }
-
-every 5 sec {
-    someObject.someEvent.invoke(someObject.a)
-}
-
-someLambda = (param) -> {System.writeln(param)}
-
-handle someObject.someEvent with (a) -> {System.writeln(a)}
-handle someObject.someEvent with anotherObject.someMethod
-
-handle anotherObject.someEvent with someLambda
 
 for i in Range(1,10){
     if i  < 5 {
