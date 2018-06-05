@@ -58,11 +58,9 @@ void rasph::interpreter::environment::ClassBuilder::compose() {
 
     std::unordered_map<std::string, rasph::common::ast::nodes::MethodMemberNode*> map;
 
-    for(auto& pair : methods_){
-        if (!map.insert(std::move(pair)).second){
+    for(auto& pair : methods_)
+        if (!map.insert(pair).second)
             throw std::runtime_error("Duplicate method");
-        }
-    }
 
     auto classDefinition = std::unique_ptr<common::types::Object>(new ClassDefinition(ClassDefinition::Name(name_),
                                                                                       ClassDefinition::Events(events_),

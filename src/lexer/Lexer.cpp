@@ -28,10 +28,6 @@ std::unique_ptr<Token> rasph::lexer::Lexer::getNextToken() {
 
     skipWhitespacesAndComments();
 
-//TODO: add token position
-//    const int tokenColumn = column_;
-//    const int tokenLine = line_;
-
     if (*iterator_ == end_) return std::make_unique<Token>(TokenType::END);
 
     return std::make_unique<Token>(getToken());

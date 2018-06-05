@@ -24,11 +24,10 @@ namespace rasph::common::ast::nodes {
 
             using namespace interpreter::environment;
 
-            std::function<void()> func = [block = block_.get()]() {
+            std::function<void()> func = [block = block_]() {
                 block->execute();
             };
 
-            block_.release();
 
             switch (timeSpecifier_.getType()){
                 case common::tokens::TokenType::MIN:
@@ -49,7 +48,7 @@ namespace rasph::common::ast::nodes {
     private:
         const common::tokens::Token periodValue_;
         const common::tokens::Token timeSpecifier_;
-        std::unique_ptr<nodes::BlockNode> block_;
+        std::shared_ptr<nodes::BlockNode> block_;
     };
 }
 
