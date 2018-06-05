@@ -10,6 +10,7 @@
 #include <interpreter/Interpreter.hpp>
 #include <parser/Parser.hpp>
 #include <interpreter/environment/SymbolManager.hpp>
+#include <interpreter/environment/WorkerThread.hpp>
 
 #include <common/types/Double.hpp>
 #include <common/types/String.hpp>
@@ -513,10 +514,12 @@ BOOST_AUTO_TEST_SUITE(interpreter_tests)
 
         BOOST_CHECK_NO_THROW(tree->run());
 
-        std::this_thread::sleep_for(500ms);
+        std::this_thread::sleep_for(1s);
 
         BOOST_CHECK_GE(
-                dynamic_cast<Double const &>(SymbolManager::getInstance().getSymbol("a").getValue()).getValue(), 2);
+                dynamic_cast<Double const &>(SymbolManager::getInstance().getSymbol("a").getValue()).getValue(), 4);
+
+        WorkerThread::getInstance().close();
 
     }
 

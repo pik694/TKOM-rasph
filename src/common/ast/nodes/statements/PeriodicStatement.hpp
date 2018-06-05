@@ -7,6 +7,7 @@
 
 #include <common/tokens/tokens.h>
 #include <common/tokens/Token.h>
+#include <interpreter/environment/WorkerThread.hpp>
 #include "StatementNode.hpp"
 #include "BlockNode.hpp"
 
@@ -20,13 +21,35 @@ namespace rasph::common::ast::nodes {
                                                                block_(std::move(block_)) {}
 
         void execute() override {
-            block_->execute();
+
+            using namespace interpreter::environment;
+
+            std::function<void()> func = [block = block_.get()]() {
+                block->execute();
+            };
+
+            block_.release();
+
+            switch (timeSpecifier_.getType()){
+                case common::tokens::TokenType::MIN:
+                    WorkerThread::getInstance().addJob(func, WorkerThread::Minutes(static_cast<int>(periodValue_.getDoubleValue())));
+                    break;
+                case common::tokens::TokenType::SEC:
+                    WorkerThread::getInstance().addJob(func, WorkerThread::Seconds(static_cast<int>(periodValue_.getDoubleValue())));
+                    break;
+                case common::tokens::TokenType::MS:
+                    WorkerThread::getInstance().addJob(func, WorkerThread::Milliseconds(static_cast<int>(periodValue_.getDoubleValue())));
+                    break;
+                default:
+                    throw std::runtime_error("Invalid token");
+            }
+
         }
 
     private:
         const common::tokens::Token periodValue_;
         const common::tokens::Token timeSpecifier_;
-        const std::unique_ptr<nodes::BlockNode> block_;
+        std::unique_ptr<nodes::BlockNode> block_;
     };
 }
 
