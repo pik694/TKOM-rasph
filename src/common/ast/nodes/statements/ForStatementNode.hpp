@@ -9,8 +9,9 @@
 
 #include "BlockNode.hpp"
 #include "../assignables/AssignableNode.hpp"
+#include <common/types/Double.hpp>
 
-
+using namespace rasph::common::types;
 namespace rasph::common::ast::nodes {
     class ForStatementNode : public StatementNode {
     public:
@@ -24,14 +25,14 @@ namespace rasph::common::ast::nodes {
 
         void execute() override {
 
-            //TODO: loop range
 
-            size_t start = 0;
-            size_t end = 0;
+            auto list = range_->value()->toList();
 
-            for (; start < end; ++start)
+            for (auto value : list){
+                interpreter::environment::SymbolManager::getInstance()
+                        .saveSymbol(interpreter::environment::symbols::Symbol(iterator_, value->clone()));
                 block_->execute();
-
+            }
         }
 
     private:

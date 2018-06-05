@@ -77,4 +77,3 @@ Boolean::accept(const visitors::DivideVisitor &visitor) const {
     return visitor.divide(*this);
 }
 
-

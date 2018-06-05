@@ -54,6 +54,10 @@ namespace rasph::common::ast::nodes {
         }
 
 
+        void execute() override;
+
+        std::unique_ptr<rasph::common::types::Object> result();
+
         void accept(interpreter::environment::ClassBuilder& builder) override;
 
     private:

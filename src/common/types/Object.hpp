@@ -6,6 +6,7 @@
 #define RASPH_OBJECT_HPP
 
 #include <memory>
+#include <list>
 #include "OperatorVisitor.hpp"
 
 namespace rasph::common::types {
@@ -52,6 +53,10 @@ namespace rasph::common::types {
 
         virtual std::unique_ptr<Object> operator/(Object const &) const {
             throw std::runtime_error("This operator cannot be applied to object of this type");
+        }
+
+        virtual std::list<Object*> toList() {
+            return std::list<Object*> {this};
         }
 
         virtual std::unique_ptr<Object> accept(visitors::AddVisitor const &) const = 0;

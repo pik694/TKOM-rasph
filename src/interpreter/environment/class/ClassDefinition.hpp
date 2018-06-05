@@ -27,6 +27,7 @@ namespace rasph::interpreter::environment {
 
         ClassDefinition(Name name, Events events, Attributes attributes, Methods methods);
 
+        rasph::common::ast::nodes::MethodMemberNode* getMethod(const std::string&) const;
 
 
         const std::string &getName() const;
@@ -54,6 +55,7 @@ namespace rasph::interpreter::environment {
         std::unique_ptr<Object> accept(const common::types::visitors::DivideVisitor &visitor) const override;
 
         ClassDefinition *copyImplementation() const override;
+
 
     private:
         const std::string name_;

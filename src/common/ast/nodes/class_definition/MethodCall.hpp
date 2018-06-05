@@ -15,13 +15,17 @@ namespace rasph::common::ast::nodes {
 
         MethodCall(const std::string &object_, const std::string &member_) : ClassMemberCall(object_, member_) {}
 
+        const std::list<std::unique_ptr<AssignableNode>> &getParameters() const {
+            return parameters_;
+        }
+
         void addParameter(std::unique_ptr<AssignableNode> param){
             parameters_.push_back(std::move(param));
         }
 
         std::unique_ptr<types::Object> value() override {
             //TODO
-            throw std::runtime_error("Not implemented yet");
+            throw std::runtime_error("TODO");
         }
 
     private:

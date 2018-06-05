@@ -19,6 +19,14 @@ namespace rasph::common::ast::nodes {
             throw std::runtime_error("Not implemented yet");
         }
 
+        const std::string &getObject() const {
+            return object_;
+        }
+
+        const std::string &getMember() const {
+            return member_;
+        }
+
     private:
         const std::string object_;
         const std::string member_;
