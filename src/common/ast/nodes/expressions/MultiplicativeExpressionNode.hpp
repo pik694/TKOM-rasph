@@ -49,10 +49,7 @@ namespace rasph::common::ast::nodes {
             return value;
         }
 
-        void execute() override {
-            //TODO
-            throw std::runtime_error("Not implemented yet");
-        }
+        void execute() override {}
 
     private:
 

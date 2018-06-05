@@ -47,6 +47,7 @@ void SymbolManager::saveSymbol(symbols::Symbol&& symbol) {
 
 bool SymbolManager::contains(std::string const &symbolName) {
 
+
     symbolsMutex_.lock();
 
     auto symbolIt = symbols_.find(symbolName);

@@ -440,13 +440,12 @@ BOOST_AUTO_TEST_SUITE(interpreter_tests)
 
         BOOST_CHECK_NO_THROW(tree->run());
 
-        tree->run();
 
     }
 
     BOOST_AUTO_TEST_CASE(class_with_attributes_and_events){
 
-        std::string sample_code = "class SampleClass { var a \n var b \n event an_event }";
+        std::string sample_code = "class SampleClass0 { var a \n var b \n event an_event }";
 
         std::unique_ptr<Lexer> lexer = std::make_unique<Lexer>(
                 std::make_unique<std::stringstream>(sample_code)
@@ -457,14 +456,12 @@ BOOST_AUTO_TEST_SUITE(interpreter_tests)
         auto tree = parser.parse();
 
         BOOST_CHECK_NO_THROW(tree->run());
-
-        tree->run();
 
     }
 
     BOOST_AUTO_TEST_CASE(class_with_method){
 
-        std::string sample_code = "class SampleClass { var a \n func aFunc () { a = 10} }";
+        std::string sample_code = "class SampleClass1 { var a \n func aFunc () { a = 10} }";
 
         std::unique_ptr<Lexer> lexer = std::make_unique<Lexer>(
                 std::make_unique<std::stringstream>(sample_code)
@@ -475,8 +472,6 @@ BOOST_AUTO_TEST_SUITE(interpreter_tests)
         auto tree = parser.parse();
 
         BOOST_CHECK_NO_THROW(tree->run());
-
-        tree->run();
 
     }
 

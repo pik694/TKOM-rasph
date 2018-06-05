@@ -31,7 +31,7 @@ namespace rasph::interpreter::environment {
 
         void addElement(common::ast::nodes::MethodMemberNode const &);
 
-        virtual ~ClassBuilder();
+        virtual ~ClassBuilder() = default;
 
     private:
 
