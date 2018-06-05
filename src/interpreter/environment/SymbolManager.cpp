@@ -21,12 +21,23 @@ SymbolManager &SymbolManager::getInstance() {
 
 symbols::Symbol SymbolManager::getSymbol(const std::string& symbolName) {
 
-    symbolsMutex_.lock();
+    std::lock_guard<std::mutex> guard(symbolsMutex_);
+
+    if (methodCallArguments_ != nullptr){
+        auto methodArgumentIt = methodCallArguments_->find(symbolName);
+        if (methodArgumentIt != methodCallArguments_->end()){
+            return Symbol(methodArgumentIt->second);
+        }
+    }
+
+    if (classMembers_ != nullptr){
+        auto classMemberIt= classMembers_->find(symbolName);
+        if (classMemberIt != classMembers_->end()){
+            return Symbol(classMemberIt->second);
+        }
+    }
 
     auto symbolIt = symbols_.find(symbolName);
-
-    symbolsMutex_.unlock();
-
     if (symbolIt != symbols_.end())
         return Symbol(symbolIt->second);
 
@@ -37,7 +48,13 @@ void SymbolManager::saveSymbol(symbols::Symbol&& symbol) {
 
     std::lock_guard<std::mutex> guard(symbolsMutex_);
 
-    if (symbols_.find(symbol.getName()) == symbols_.end())
+    if (methodCallArguments_ != nullptr && methodCallArguments_->find(symbol.getName()) != methodCallArguments_->end())
+        methodCallArguments_->at(symbol.getName()) = std::move(symbol);
+
+    else if ( classMembers_!= nullptr && classMembers_->find(symbol.getName()) != classMembers_->end())
+        classMembers_->at(symbol.getName()) = std::move(symbol);
+
+    else if (symbols_.find(symbol.getName()) == symbols_.end())
         symbols_.emplace(std::make_pair(std::string(symbol.getName()), std::move(symbol)));
 
     else
@@ -56,4 +73,20 @@ bool SymbolManager::contains(std::string const &symbolName) {
 
     return symbolIt != symbols_.end();
 
+}
+
+void SymbolManager::setClassMembers(std::unordered_map<std::string, Symbol> *classMembers) {
+    SymbolManager::classMembers_ = classMembers;
+}
+
+void SymbolManager::setMethodCallArguments(std::unordered_map<std::string, Symbol> *methodCallArguments) {
+    SymbolManager::methodCallArguments_ = methodCallArguments;
+}
+
+void SymbolManager::unsetMethodCallArguments() {
+    methodCallArguments_ = nullptr;
+}
+
+void SymbolManager::unsetClassMembers() {
+    classMembers_ = nullptr;
 }

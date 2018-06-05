@@ -21,6 +21,13 @@ namespace rasph::interpreter::environment {
 
         symbols::Symbol getSymbol(const std::string& symbolName);
 
+        void setClassMembers(std::unordered_map<std::string, symbols::Symbol> *classMembers);
+
+        void setMethodCallArguments(std::unordered_map<std::string, symbols::Symbol> *methodCallArguments);
+
+        void unsetMethodCallArguments();
+        void unsetClassMembers();
+
         void saveSymbol(symbols::Symbol&& symbol);
 
         bool contains(std::string const& symbolName);
@@ -35,6 +42,9 @@ namespace rasph::interpreter::environment {
 
         std::mutex symbolsMutex_;
         std::unordered_map<std::string, symbols::Symbol> symbols_;
+        std::unordered_map<std::string, symbols::Symbol>* classMembers_ = nullptr;
+        std::unordered_map<std::string, symbols::Symbol>* methodCallArguments_ = nullptr;
+
 
     };
 }

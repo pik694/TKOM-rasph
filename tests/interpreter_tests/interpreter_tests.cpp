@@ -494,7 +494,7 @@ BOOST_AUTO_TEST_SUITE(interpreter_tests)
 
     BOOST_AUTO_TEST_CASE(method_invocation){
 
-        std::string sample_code = "class SampleClass2 { var a \n func aFunc () { a = 10} }";
+        std::string sample_code = "class SampleClass2 { var a \n func aFunc () { a = 10} } \n object = SampleClass2";
 
         std::unique_ptr<Lexer> lexer = std::make_unique<Lexer>(
                 std::make_unique<std::stringstream>(sample_code)
