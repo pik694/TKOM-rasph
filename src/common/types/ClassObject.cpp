@@ -5,9 +5,18 @@
 #include "ClassObject.hpp"
 
 #include <common/ast/nodes/class_definition/members/MethodMemberNode.hpp>
+#include <interpreter/environment/SymbolManager.hpp>
 
-rasph::common::types::ClassObject::ClassObject(rasph::interpreter::environment::ClassDefinition &classDefinition)
-        : classDefinition_(classDefinition) {}
+rasph::common::types::ClassObject::ClassObject(const rasph::interpreter::environment::ClassDefinition &classDefinition)
+        : classDefinition_(classDefinition) {
+
+    auto& attributes = classDefinition.getAttributes();
+
+    for (auto const& member : attributes){
+        symbols_.insert(std::make_pair(member, interpreter::environment::symbols::Symbol(member, nullptr)));
+    }
+
+}
 
 rasph::common::types::ClassObject::operator bool() const {
     return false;
@@ -54,7 +63,7 @@ rasph::common::types::Object *rasph::common::types::ClassObject::copyImplementat
 }
 
 std::unique_ptr<rasph::common::types::Object>
-rasph::common::types::ClassObject::valueOfMember(const std::string &name) {
+rasph::common::types::ClassObject::valueOfMember(const std::string &name) const {
 
     auto iterator = symbols_.find(name);
 
@@ -70,12 +79,12 @@ rasph::common::types::ClassObject::executeMehtod(const std::string &name) {
     if (method == nullptr) throw std::runtime_error("Such a method does not exist");
 
 
-    //TODO: load symbols
+    interpreter::environment::SymbolManager::getInstance().setClassMembers(&symbols_);
 
     method->execute();
     auto result = method->result();
 
-    //TODO unload symbols
+    interpreter::environment::SymbolManager::getInstance().unsetClassMembers() ;
 
     return std::move(result);
 

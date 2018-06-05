@@ -22,7 +22,8 @@ Symbol &Symbol::operator=(Symbol &&symbol) {
 }
 
 Symbol::Symbol(Symbol const &other) : name_ (other.name_){
-    value_ = other.value_->clone();
+
+    value_ = other.value_ != nullptr ? other.value_->clone() : nullptr;
 }
 
 rasph::common::types::Object const& Symbol::getValue() const {

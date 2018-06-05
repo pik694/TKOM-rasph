@@ -24,8 +24,18 @@ namespace rasph::common::ast::nodes {
         }
 
         std::unique_ptr<types::Object> value() override {
-            //TODO
-            throw std::runtime_error("TODO");
+
+            auto symbol = interpreter::environment::SymbolManager::getInstance().getSymbol(object_);
+
+            auto& const_object = dynamic_cast<types::ClassObject const&>(symbol.getValue());
+            auto& object = const_cast<types::ClassObject&>(const_object);
+
+
+
+            auto result = object.executeMehtod(member_);
+
+            return std::move(result);
+
         }
 
     private:

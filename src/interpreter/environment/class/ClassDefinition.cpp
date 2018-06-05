@@ -3,6 +3,7 @@
 //
 
 #include "ClassDefinition.hpp"
+#include "common/types/ClassObject.hpp"
 
 using namespace rasph::interpreter::environment;
 
@@ -63,6 +64,14 @@ ClassDefinition::accept(const rasph::common::types::visitors::DivideVisitor &vis
     throw std::runtime_error("Invalid call");
 }
 
-ClassDefinition *ClassDefinition::copyImplementation() const {
-    return new ClassDefinition(*this);
+rasph::common::types::Object *ClassDefinition::copyImplementation() const {
+    return new common::types::ClassObject(*this);
+}
+
+const std::vector<std::string> &ClassDefinition::getAttributes() const {
+    return attributes_;
+}
+
+rasph::common::ast::nodes::MethodMemberNode *ClassDefinition::getMethod(const std::string &method) const {
+    return methods_.at(method);
 }

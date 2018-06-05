@@ -11,7 +11,7 @@
 
 void rasph::interpreter::environment::ClassBuilder::build(const rasph::common::ast::nodes::ClassNode &classNode) {
 
-    name_ = "@" + classNode.getName();
+    name_ = classNode.getName();
 
     if (SymbolManager::getInstance().contains(name_))
         throw std::runtime_error("Class redefinition: " + classNode.getName());
@@ -39,25 +39,36 @@ void rasph::interpreter::environment::ClassBuilder::addElement(const rasph::comm
 
 void
 rasph::interpreter::environment::ClassBuilder::addElement(const rasph::common::ast::nodes::MethodMemberNode &node) {
-
-    if (methods_.find(node.getName()) != methods_.end())
-        throw std::runtime_error("Duplicate function with name: " + node.getName());
+//
+//    if (methods_.find(node.getName()) != methods_.end())
+//        throw std::runtime_error("Duplicate function with name: " + node.getName());
 
     auto &ref = const_cast<rasph::common::ast::nodes::MethodMemberNode &>(node);
     auto *ptr = new rasph::common::ast::nodes::MethodMemberNode(std::move(ref));
 
-    methods_.insert(std::make_pair(node.getName(), ptr));
+    auto pair = std::make_pair(node.getName(), ptr);
+
+    methods_.push_back(pair);
+
 
 }
 
 
 void rasph::interpreter::environment::ClassBuilder::compose() {
 
+    std::unordered_map<std::string, rasph::common::ast::nodes::MethodMemberNode*> map;
+
+    for(auto& pair : methods_){
+        if (!map.insert(std::move(pair)).second){
+            throw std::runtime_error("Duplicate method");
+        }
+    }
+
     auto classDefinition = std::unique_ptr<common::types::Object>(new ClassDefinition(ClassDefinition::Name(name_),
                                                                                       ClassDefinition::Events(events_),
                                                                                       ClassDefinition::Attributes(
                                                                                               attributes_),
-                                                                                      ClassDefinition::Methods(methods_)
+                                                                                      ClassDefinition::Methods(map)
     ));
 
 

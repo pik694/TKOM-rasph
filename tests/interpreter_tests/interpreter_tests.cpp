@@ -315,16 +315,19 @@ BOOST_AUTO_TEST_SUITE(interpreter_tests)
 
 
         BOOST_CHECK_EQUAL(
-                dynamic_cast<Boolean const &>(SymbolManager::getInstance().getSymbol("true0").getValue()).getValue(), true);
+                dynamic_cast<Boolean const &>(SymbolManager::getInstance().getSymbol("true0").getValue()).getValue(),
+                true);
         BOOST_CHECK_EQUAL(
-                dynamic_cast<Boolean const &>(SymbolManager::getInstance().getSymbol("true1").getValue()).getValue(), true);
+                dynamic_cast<Boolean const &>(SymbolManager::getInstance().getSymbol("true1").getValue()).getValue(),
+                true);
 
 
-
         BOOST_CHECK_EQUAL(
-                dynamic_cast<Boolean const &>(SymbolManager::getInstance().getSymbol("false0").getValue()).getValue(), false);
+                dynamic_cast<Boolean const &>(SymbolManager::getInstance().getSymbol("false0").getValue()).getValue(),
+                false);
         BOOST_CHECK_EQUAL(
-                dynamic_cast<Boolean const &>(SymbolManager::getInstance().getSymbol("false1").getValue()).getValue(), false);
+                dynamic_cast<Boolean const &>(SymbolManager::getInstance().getSymbol("false1").getValue()).getValue(),
+                false);
 
     }
 
@@ -347,7 +350,6 @@ BOOST_AUTO_TEST_SUITE(interpreter_tests)
                 dynamic_cast<Boolean const &>(SymbolManager::getInstance().getSymbol("a").getValue()).getValue(), true);
 
     }
-
 
 
     BOOST_AUTO_TEST_CASE(if_simple_test_2) {
@@ -426,7 +428,7 @@ BOOST_AUTO_TEST_SUITE(interpreter_tests)
 
     }
 
-    BOOST_AUTO_TEST_CASE(for_loop_test){
+    BOOST_AUTO_TEST_CASE(for_loop_test) {
         std::string sample_code = "for i in 1 { a = i }";
 
         std::unique_ptr<Lexer> lexer = std::make_unique<Lexer>(
@@ -443,7 +445,7 @@ BOOST_AUTO_TEST_SUITE(interpreter_tests)
                 dynamic_cast<Double const &>(SymbolManager::getInstance().getSymbol("a").getValue()).getValue(), 1);
     }
 
-    BOOST_AUTO_TEST_CASE(class_declaration_test){
+    BOOST_AUTO_TEST_CASE(class_declaration_test) {
 
         std::string sample_code = "class SampleClass {}";
 
@@ -460,7 +462,7 @@ BOOST_AUTO_TEST_SUITE(interpreter_tests)
 
     }
 
-    BOOST_AUTO_TEST_CASE(class_with_attributes_and_events){
+    BOOST_AUTO_TEST_CASE(class_with_attributes_and_events) {
 
         std::string sample_code = "class SampleClass0 { var a \n var b \n event an_event }";
 
@@ -476,7 +478,7 @@ BOOST_AUTO_TEST_SUITE(interpreter_tests)
 
     }
 
-    BOOST_AUTO_TEST_CASE(class_with_method){
+    BOOST_AUTO_TEST_CASE(class_with_method) {
 
         std::string sample_code = "class SampleClass1 { var a \n func aFunc () { a = 10} }";
 
@@ -492,9 +494,9 @@ BOOST_AUTO_TEST_SUITE(interpreter_tests)
 
     }
 
-    BOOST_AUTO_TEST_CASE(method_invocation){
+    BOOST_AUTO_TEST_CASE(method_invocation) {
 
-        std::string sample_code = "class SampleClass2 { var a \n func aFunc () { a = 10} } \n object = SampleClass2";
+        std::string sample_code = "class SampleClass2 { var a \n func aFunc () { a = 10 \n return a} } \n object = SampleClass2 \n result = object.aFunc() \n result1 = object.a";
 
         std::unique_ptr<Lexer> lexer = std::make_unique<Lexer>(
                 std::make_unique<std::stringstream>(sample_code)
@@ -506,8 +508,10 @@ BOOST_AUTO_TEST_SUITE(interpreter_tests)
 
         BOOST_CHECK_NO_THROW(tree->run());
 
-    }
+        BOOST_CHECK_EQUAL(
+                dynamic_cast<Double const &>(SymbolManager::getInstance().getSymbol("result").getValue()).getValue(), 10);
 
+    }
 
 BOOST_AUTO_TEST_SUITE_END()
 #endif

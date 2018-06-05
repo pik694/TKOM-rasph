@@ -12,7 +12,7 @@
 namespace rasph::common::types {
     class ClassObject : public Object{
     public:
-        ClassObject(interpreter::environment::ClassDefinition &classDefinition);
+        ClassObject(const interpreter::environment::ClassDefinition &classDefinition);
 
         explicit operator bool() const override;
 
@@ -32,7 +32,7 @@ namespace rasph::common::types {
 
         std::unique_ptr<Object> accept(visitors::DivideVisitor const &visitor) const override;
 
-        std::unique_ptr<Object> valueOfMember(const std::string& name);
+        std::unique_ptr<Object> valueOfMember(const std::string& name) const;
 
         std::unique_ptr<Object> executeMehtod(const std::string& name);
 
@@ -41,7 +41,7 @@ namespace rasph::common::types {
 
     private:
 
-        interpreter::environment::ClassDefinition& classDefinition_;
+        const interpreter::environment::ClassDefinition& classDefinition_;
         std::unordered_map<std::string, interpreter::environment::symbols::Symbol> symbols_;
     };
 }

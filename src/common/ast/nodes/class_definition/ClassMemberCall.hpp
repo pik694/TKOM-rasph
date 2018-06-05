@@ -7,6 +7,8 @@
 
 
 #include <common/ast/nodes/assignables/AssignableNode.hpp>
+#include <interpreter/environment/SymbolManager.hpp>
+#include <common/types/ClassObject.hpp>
 
 namespace rasph::common::ast::nodes {
     class ClassMemberCall : public  AssignableNode {
@@ -15,8 +17,13 @@ namespace rasph::common::ast::nodes {
 
 
         std::unique_ptr<types::Object> value() override {
-            //TODO
-            throw std::runtime_error("Not implemented yet");
+
+                auto symbol = interpreter::environment::SymbolManager::getInstance().getSymbol(object_);
+
+                auto& object = dynamic_cast<types::ClassObject const&>(symbol.getValue());
+
+                return object.valueOfMember(member_);
+
         }
 
         const std::string &getObject() const {
@@ -27,7 +34,7 @@ namespace rasph::common::ast::nodes {
             return member_;
         }
 
-    private:
+    protected:
         const std::string object_;
         const std::string member_;
     };

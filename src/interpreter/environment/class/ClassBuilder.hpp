@@ -40,7 +40,7 @@ namespace rasph::interpreter::environment {
         std::string name_;
         std::vector<std::string> attributes_;
         std::vector<std::string> events_;
-        std::unordered_map<std::string, rasph::common::ast::nodes::MethodMemberNode* > methods_;
+        std::vector<std::pair<std::string, rasph::common::ast::nodes::MethodMemberNode*>> methods_;
 
     };
 }
