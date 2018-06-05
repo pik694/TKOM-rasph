@@ -15,6 +15,7 @@
 #include "nodes/class_definition/MethodCall.hpp"
 
 #include "nodes/statements/StatementNode.hpp"
+#include "nodes/statements/PeriodicStatement.hpp"
 #include "nodes/statements/IfStatementNode.hpp"
 #include "nodes/statements/AssignStatementNode.hpp"
 #include "nodes/statements/ForStatementNode.hpp"

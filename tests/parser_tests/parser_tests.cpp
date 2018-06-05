@@ -259,6 +259,23 @@ BOOST_AUTO_TEST_SUITE(parser_tests)
 
     }
 
+    BOOST_AUTO_TEST_CASE(parse_every_statement) {
+
+        std::string sample_code = " every 10 min { a = a + 1}";
+
+        std::unique_ptr<Lexer> lexer = std::make_unique<Lexer>(
+                std::make_unique<std::stringstream>(sample_code)
+        );
+
+        Parser parser(std::move(lexer));
+
+        auto tree = parser.parse();
+
+        void * ptr;
+        BOOST_CHECK_NO_THROW(ptr = dynamic_cast<nodes::StatementNode *>(tree->getNodes().at(0).get()));
+
+    }
+
 
 
 BOOST_AUTO_TEST_SUITE_END()

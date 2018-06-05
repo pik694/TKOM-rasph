@@ -22,6 +22,7 @@ namespace rasph::common::tokens {
         FUNC,
         VAR,
         RETURN,
+        EVERY,
         EVENT,
         HANDLE,
         WITH,

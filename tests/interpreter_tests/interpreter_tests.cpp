@@ -15,6 +15,8 @@
 #include <common/types/String.hpp>
 #include <common/types/Boolean.hpp>
 
+#include <thread>
+#include <chrono>
 
 using namespace rasph::common::types;
 using namespace rasph::interpreter;
@@ -480,6 +482,7 @@ BOOST_AUTO_TEST_SUITE(interpreter_tests)
 
     BOOST_AUTO_TEST_CASE(class_with_method) {
 
+
         std::string sample_code = "class SampleClass1 { var a \n func aFunc () { a = 10} }";
 
         std::unique_ptr<Lexer> lexer = std::make_unique<Lexer>(
@@ -494,9 +497,11 @@ BOOST_AUTO_TEST_SUITE(interpreter_tests)
 
     }
 
-    BOOST_AUTO_TEST_CASE(method_invocation) {
 
-        std::string sample_code = "class SampleClass2 { var a \n func aFunc () { a = 10 \n return a} } \n object = SampleClass2 \n result = object.aFunc() \n result1 = object.a";
+    BOOST_AUTO_TEST_CASE(every_statement) {
+        using namespace std::chrono_literals;
+
+        std::string sample_code = "a = 0 \n every 200 ms { a = a + 1}";
 
         std::unique_ptr<Lexer> lexer = std::make_unique<Lexer>(
                 std::make_unique<std::stringstream>(sample_code)
@@ -508,10 +513,33 @@ BOOST_AUTO_TEST_SUITE(interpreter_tests)
 
         BOOST_CHECK_NO_THROW(tree->run());
 
-        BOOST_CHECK_EQUAL(
-                dynamic_cast<Double const &>(SymbolManager::getInstance().getSymbol("result").getValue()).getValue(), 10);
+        std::this_thread::sleep_for(500ms);
+
+        BOOST_CHECK_GE(
+                dynamic_cast<Double const &>(SymbolManager::getInstance().getSymbol("a").getValue()).getValue(), 2);
 
     }
+
+
+
+//    BOOST_AUTO_TEST_CASE(method_invocation) {
+//
+//        std::string sample_code = "class SampleClass2 { var a \n func aFunc () { a = 10 \n return a} } \n object = SampleClass2 \n result = object.aFunc() \n result1 = object.a";
+//
+//        std::unique_ptr<Lexer> lexer = std::make_unique<Lexer>(
+//                std::make_unique<std::stringstream>(sample_code)
+//        );
+//
+//        Parser parser(std::move(lexer));
+//
+//        auto tree = parser.parse();
+//
+//        BOOST_CHECK_NO_THROW(tree->run());
+//
+//        BOOST_CHECK_EQUAL(
+//                dynamic_cast<Double const &>(SymbolManager::getInstance().getSymbol("result").getValue()).getValue(), 10);
+//
+//    }
 
 BOOST_AUTO_TEST_SUITE_END()
 #endif

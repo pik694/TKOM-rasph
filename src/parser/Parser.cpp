@@ -47,7 +47,12 @@ node_ptr_t Parser::tryParse<nodes::LiteralNode>();
 template<>
 node_ptr_t Parser::tryParse<nodes::VariableAssignableNode>();
 
+
+template<>
+node_ptr_t  Parser::tryParse<nodes::PeriodicStatement>();
+
 /// PARSING METHODS
+
 
 template<typename ... Args>
 rasph::parser::node_ptr_t rasph::parser::Parser::tryParse() {
@@ -162,10 +167,9 @@ node_ptr_t Parser::tryParse<nodes::LiteralNode>() {
 
 template<>
 node_ptr_t Parser::tryParse<nodes::StatementNode>() {
-    //TODO : method call
 
     return tryParse < nodes::ClassMemberCall, nodes::BlockNode, nodes::ForStatementNode, nodes::IfStatementNode,
-            nodes::AssignStatementNode >
+            nodes::AssignStatementNode, nodes::PeriodicStatement>
             ();
 }
 
@@ -507,6 +511,27 @@ template<>
 node_ptr_t Parser::tryParse<nodes::AssignableNode>() {
     return tryParse < nodes::ExpressionNode > ();
 }
+
+template<>
+node_ptr_t  Parser::tryParse<nodes::PeriodicStatement>() {
+
+    if (!Acceptor<TokenType::EVERY>(*this)()){
+        return nullptr;
+    }
+
+    auto time = AcceptorErr<TokenType::NUM_LITERAL>(*this)();
+
+    auto specifier = AcceptorErr<TokenType::SEC, TokenType::MIN, TokenType::MS>(*this)();
+
+    auto block = cast<nodes::BlockNode>(tryParse<nodes::BlockNode>());
+
+
+    if (!block)
+        throw std::runtime_error("Invalid every statement");
+
+    return node_ptr_t(new nodes::PeriodicStatement(*time, *specifier, std::move(block)));
+}
+
 
 
 /// OTHER MEMBERS

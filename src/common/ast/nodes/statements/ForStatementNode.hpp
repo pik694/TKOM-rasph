@@ -12,6 +12,7 @@
 #include <common/types/Double.hpp>
 
 using namespace rasph::common::types;
+
 namespace rasph::common::ast::nodes {
     class ForStatementNode : public StatementNode {
     public:

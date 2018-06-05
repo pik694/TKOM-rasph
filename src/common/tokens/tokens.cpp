@@ -31,7 +31,8 @@ namespace rasph::common::tokens {
             {"on",     TokenType::TRUE},
             {"off",    TokenType::FALSE},
             {"and",    TokenType::AND},
-            {"or",     TokenType::OR}
+            {"or",     TokenType::OR},
+            {"every",  TokenType::EVERY},
 
     };
 
@@ -55,7 +56,7 @@ namespace rasph::common::tokens {
             {"<=", TokenType::LEQUAL},
             {">",  TokenType::GREATER},
             {">=", TokenType::GEQUAL},
-            {"!", TokenType::NOT}
+            {"!",  TokenType::NOT}
     };
 
 }

@@ -3,11 +3,12 @@ project(rasph)
 
 set(CMAKE_CXX_STANDARD 17)
 
-find_package(Boost 1.60 REQUIRED COMPONENTS unit_test_framework)
+find_package(Boost 1.60 REQUIRED COMPONENTS unit_test_framework system thread )
 
 include_directories(src/)
 include_directories(${Boost_INCLUDE_DIRS})
 
+add_subdirectory(src)
 add_subdirectory(src/lexer)
 add_subdirectory(src/common)
 add_subdirectory(src/parser)
