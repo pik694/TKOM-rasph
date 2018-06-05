@@ -2,6 +2,7 @@
 // Created by Piotr Żelazko on 07.05.2018.
 //
 
+#include <interpreter/environment/class/ClassBuilder.hpp>
 #include "ClassNode.hpp"
 
 using namespace rasph::common::ast::nodes;
@@ -25,6 +26,8 @@ void ClassNode::execute() {
 }
 
 void ClassNode::build() {
-    //TODO
-    throw std::runtime_error("TOOD");
+
+    interpreter::environment::ClassBuilder builder;
+    builder.build(*this);
+
 }

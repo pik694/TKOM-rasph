@@ -8,14 +8,19 @@
 #include "ClassMemberNode.hpp"
 
 namespace rasph::common::ast::nodes {
-    class AttributeMemberNode : public ClassMemberNode{
+    class AttributeMemberNode : public ClassMemberNode {
     public:
-        AttributeMemberNode(const std::string &name) : ClassMemberNode(name){};
+        explicit AttributeMemberNode(const std::string &name) : ClassMemberNode(name){};
 
         void execute() override {
             //TODO
             throw std::runtime_error("Not implemented yet");
         }
+
+        void accept(interpreter::environment::ClassBuilder& builder) override {
+            builder.addElement(*this);
+        }
+
     };
 }
 

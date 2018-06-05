@@ -11,11 +11,20 @@
 #include <algorithm>
 #include <common/ast/nodes/statements/StatementNode.hpp>
 #include <common/ast/nodes/assignables/AssignableNode.hpp>
+#include "ClassMemberNode.hpp"
 
 namespace rasph::common::ast::nodes {
     class MethodMemberNode : public ClassMemberNode {
     public:
+
         MethodMemberNode(const std::string &name) : ClassMemberNode(name) {}
+
+        MethodMemberNode(MethodMemberNode&& another): ClassMemberNode(another.getName()) {
+            parameters_ = std::move(another.parameters_);
+            statements_ = std::move(another.statements_);
+            result_ = std::move(result_);
+
+        }
 
         const std::vector<const std::string> &getParameters() const {
             return parameters_;
@@ -45,11 +54,7 @@ namespace rasph::common::ast::nodes {
         }
 
 
-        void execute() override {
-            //TODO
-            throw std::runtime_error("Not implemented yet");
-        }
-
+        void accept(interpreter::environment::ClassBuilder& builder) override;
 
     private:
         std::vector<const std::string> parameters_;

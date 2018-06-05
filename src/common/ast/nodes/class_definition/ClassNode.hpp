@@ -7,11 +7,13 @@
 
 #include <common/ast/ProgramNode.hpp>
 #include "members/ClassMemberNode.hpp"
+#include "ClassBuilderAcceptor.hpp"
 #include <string>
 #include <vector>
+#include <interpreter/environment/class/ClassBuilder.hpp>
 
 namespace rasph::common::ast::nodes {
-    class ClassNode : public ProgramNode{
+    class ClassNode : public ProgramNode {
     public:
         explicit ClassNode(const std::string &name);
 

@@ -8,13 +8,16 @@
 
 #include <common/ast/ProgramNode.hpp>
 #include <string>
+#include <common/ast/nodes/class_definition/ClassBuilderAcceptor.hpp>
 
 namespace rasph::common::ast::nodes {
-    class ClassMemberNode : public ProgramNode {
+    class ClassMemberNode : public ProgramNode, public ClassBuilderAcceptor {
     public:
-        ClassMemberNode(const std::string &name): name_(name){}
+        explicit ClassMemberNode(std::string name): name_(std::move(name)){}
 
         const std::string &getName() const { return name_;}
+
+        void execute() override {}
 
     private:
         const std::string name_;
